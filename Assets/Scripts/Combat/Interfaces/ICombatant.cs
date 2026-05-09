@@ -11,6 +11,7 @@ public interface ICombatant
 
     void TakeDamage(int amount);
     void Heal(int amount);
+    void ModifyStat(StatType stat, int amount);
     void ChooseAction(CombatManager combatManager);
     void ApplyStatusEffect(IStatusEffect effect);
     void TickStatusEffects();

@@ -1,0 +1,32 @@
+public class UseItemAction : ICombatAction
+{
+    private readonly ItemData item;
+
+    public string ActionName => item != null ? item.itemName : "Objeto";
+
+    public UseItemAction(ItemData item)
+    {
+        this.item = item;
+    }
+
+    public void Execute(ICombatant user, ICombatant target)
+    {
+        if (item == null || target == null)
+        {
+            return;
+        }
+
+        switch (item.effectType)
+        {
+            case ItemEffectType.Heal:
+                target.Heal(item.power);
+                break;
+            case ItemEffectType.BuffMemory:
+                target.ApplyStatusEffect(new StatModifierEffect(item.itemName, StatType.Memoria, item.power, 2));
+                break;
+            case ItemEffectType.Revive:
+                target.Heal(item.power);
+                break;
+        }
+    }
+}
