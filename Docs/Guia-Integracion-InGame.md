@@ -59,12 +59,14 @@ Para objetos que requieren animaciones aleatorias:
 ---
 
 ## 5. Crear datos de combate (ScriptableObjects)
-Crea estos assets en una carpeta como `Assets/Game/Data/`:
+Crea estos assets en la carpeta usada en la rama dev:
+- `Assets/Game/Scriptable Objects/`
+  - `Abilities/`, `Items/`, `Players/`, `Enemies/`
 
 ### 5.1 Estadísticas de personajes
 - **Create → RPG → Character Stats** (`CharacterStats`)
 - Configura:
-- `characterName`, `maxCordura` (salud/cordura), `inteligencia`, `memoria`, `rapidez`, `fealdad`.
+  - `characterName`, `maxCordura` (salud/cordura), `inteligencia`, `memoria`, `rapidez`, `fealdad`.
   - `startingAbilities`: lista de habilidades iniciales.
 
 ### 5.2 Habilidades
@@ -123,13 +125,14 @@ Crea estos assets en una carpeta como `Assets/Game/Data/`:
    - **Ataque** → `BattleUIController.OnAttackPressed`
    - **Defender** → `BattleUIController.OnDefendPressed`
    - **Huir** → `BattleUIController.OnFleePressed`
-5. Para habilidades e ítems:
-   - Crea botones dinámicos (o estáticos) y enlázalos a:
-     - `OnAbilityPressed(AbilityData)`
-     - `OnItemPressed(ItemData)`
+5. Para habilidades e ítems (configuración adicional):
+   - Crea **un botón por habilidad/ítem**.
+   - En el evento **OnClick** asigna:
+     - `OnAbilityPressed(AbilityData)` con el asset de habilidad.
+     - `OnItemPressed(ItemData)` con el asset de ítem.
 6. Para selección de objetivos:
    - Crea botones por cada objetivo válido y enlázalos a:
-     - `OnTargetSelected(BaseCharacter)`
+     - `OnTargetSelected(BaseCharacter)` (arrastrando el GameObject del objetivo).
 
 ---
 
@@ -137,6 +140,12 @@ Crea estos assets en una carpeta como `Assets/Game/Data/`:
 Opciones recomendadas:
 - **Auto start**: deja `autoStart = true` en `CombatManager`.
 - **Desde un trigger**: deja `autoStart = false` y llama a `CombatManager.StartCombat()` desde un script de evento (por ejemplo, al entrar a un área).
+- **Desde colisión (rama dev)**:
+  1. Añade `PlayerEncounter` al enemigo.
+  2. Asigna el `CombatManager` en el inspector.
+  3. Verifica `Collider` en jugador y enemigo, y `Rigidbody` en al menos uno.
+  4. Deja `autoStart = false` para evitar inicio automático al cargar.
+  5. En colisión, `PlayerEncounter` llama a `SetEnemyToList()` y `StartCombat()`.
 
 > Consejo: si cambias de escena (exploración → combate), conserva datos del jugador con `DontDestroyOnLoad` o mediante un GameManager.
 

@@ -1,9 +1,9 @@
 # Guía detallada: cómo funcionan los sistemas
 
 ## Visión general
-El proyecto implementa un **RPG por turnos** con los siguientes bloques principales:
+El proyecto implementa un **RPG por turnos** con estos bloques:
 - **Movimiento y animación** del jugador en el mundo.
-- **Sistema de combate por turnos** con acciones, habilidades, ítems, IA y estados.
+- **Combate por turnos** con acciones, habilidades, ítems, IA y estados.
 - **Datos de juego** basados en ScriptableObjects.
 - **UI de combate** para selección de acciones y objetivos.
 
@@ -13,15 +13,15 @@ El proyecto implementa un **RPG por turnos** con los siguientes bloques principa
 **Archivo:** `Assets/Game/Scripts/PlayerController.cs`
 
 ### Flujo de datos
-1. El Input System envía un `Vector2` en `OnMove`.
-2. `movementX` y `movementY` se actualizan con ese input.
-3. En `FixedUpdate` se crea un vector 3D (X, 0, Z).
-4. Se aplica velocidad fija al `Rigidbody` con `rb.linearVelocity`.
+1. El **Input System** llama `OnMove(InputAction.CallbackContext)`.
+2. Se lee un `Vector2` y se guarda en `movementX / movementY`.
+3. En `FixedUpdate` se construye un vector 3D `(x, 0, z)`.
+4. Se aplica velocidad en el `Rigidbody` con `rb.linearVelocity`.
 
 ### Puntos clave
-- **Velocidad constante**: el movimiento siempre tiene la misma magnitud.
-- **Movimiento en plano**: se usa XZ para desplazamiento y Y para gravedad.
-- **Ajuste de altura**: existe un bloque comentado que permite pegar el personaje al terreno usando Raycast.
+- **Input desacoplado**: el script depende de `PlayerInput` usando *Send Messages*.
+- **Movimiento plano**: el personaje se desplaza en XZ, manteniendo Y para gravedad.
+- **Ajuste de altura**: existe un bloque comentado para proyectar al terreno con Raycast.
 
 ---
 
@@ -30,13 +30,13 @@ El proyecto implementa un **RPG por turnos** con los siguientes bloques principa
 
 ### Qué hace
 - Lee la velocidad del `Rigidbody`.
-- Calcula `planarSpeed` (magnitud en XZ).
-- Escribe ese valor en el parámetro del Animator `Velocity`.
-- Hace flip horizontal del sprite según el movimiento X.
+- Calcula `planarSpeed` (magnitud XZ).
+- Actualiza el parámetro del Animator `Velocity`.
+- Realiza *flip* horizontal del sprite según el movimiento X.
 
 ### Puntos clave
-- `velocityParam` permite renombrar el parámetro si se desea.
-- `flipDeadZone` evita micro-flips cuando la velocidad es casi cero.
+- `velocityParam` permite renombrar el parámetro del Animator.
+- `flipDeadZone` evita cambios de dirección por micro-movimientos.
 
 ---
 
@@ -44,164 +44,166 @@ El proyecto implementa un **RPG por turnos** con los siguientes bloques principa
 **Archivo:** `Assets/Game/Scripts/World/RandomAnimatorController.cs`
 
 ### Qué hace
-- Cada intervalo aleatorio, cambia un parámetro en el Animator.
+- Cambia un parámetro del Animator en intervalos aleatorios.
 - Usa una semilla (`seed`) para reproducibilidad.
-- Controla rango de valores y tiempos.
-
-### Ideal para
-- NPCs con animaciones de idle variables.
-- Props ambientales (fuego, luces, criaturas).
+- Limita valores y tiempos con rangos configurables.
 
 ---
 
-## 4. Sistema de combate por turnos
-### 4.1 Orquestación del combate
+## 4. Interfaces y contratos
+Estas interfaces separan **lógica** de **implementaciones** y permiten extender el sistema sin romper dependencias:
+
+- **`ICombatant`**: contrato de un actor en combate. Expone stats, estado de vida y métodos de daño/curación/estados.
+- **`ICombatAction`**: acción ejecutable con un objetivo (ataque, huida, habilidad, ítem).
+- **`IMultiTargetCombatAction`**: acción capaz de ejecutar sobre múltiples objetivos.
+- **`IActionSelector`**: fuente de decisiones del jugador (UI). Implementado por `BattleUIController`.
+- **`IAIController`**: lógica de decisión de enemigos. Implementado por `RandomEnemyAIController`.
+- **`IActionResolver`**: decide si una acción aplica a un objetivo o a muchos.
+- **`ITurnQueue`**: orden de turnos (cola de combatientes).
+- **`IVictoryCondition`**: evalúa condiciones de victoria/derrota.
+- **`IStatusEffect`**: ciclo de vida de efectos (aplicar → tick → remover).
+- **`IFleeHandler`**: encapsula la lógica de huida (implementada por `CombatManager`).
+
+---
+
+## 5. Sistema de combate por turnos
+### 5.1 Orquestación del combate
 **Archivo:** `Assets/Game/Scripts/Combat/Core/CombatManager.cs`
 
-#### Flujo principal
-1. `StartCombat()` construye listas de jugadores/enemigos.
-2. Inicializa `TurnQueue` ordenando por velocidad.
-3. Comienza el turno con `StartNextTurn()`.
-4. Cada combatiente ejecuta `ChooseAction()`.
-5. El resultado de la acción se resuelve y termina el turno.
+**Responsabilidades principales**:
+- Mantener listas de **jugadores** y **enemigos** (`playerParty` / `enemyParty`).
+- Convertirlas a `ICombatant` para el sistema interno.
+- Iniciar el combate (`StartCombat`) y evaluar el final (`EndCombat`).
+- Publicar eventos (`TurnStarted`, `CombatLog`, `CombatEnded`).
 
-#### Eventos disponibles
-- `TurnStarted(ICombatant)`
-- `CombatLog(string)`
-- `CombatEnded(CombatResult)`
+**Flujo base**:
+1. `StartCombat()` construye listas y prepara la cola (`TurnQueue`).
+2. Inicia el primer turno con `StartNextTurn()`.
+3. El combatiente activo llama `ChooseAction()`.
+4. La acción se resuelve (`ActionResolver`).
+5. Se termina el turno y se evalúa victoria.
 
----
+**Acciones clave**:
+- `SubmitPlayerAction()` solo acepta acciones cuando el turno pertenece a `PlayerCharacter`.
+- `TryFlee()` calcula la probabilidad: `baseFleeChance + Luck * 0.01f`.
+- `GetTargetsFor()` calcula objetivos según bando y tipo de objetivo.
+- `SetEnemyToList()` (rama dev) permite agregar enemigos dinámicamente antes de iniciar el combate.
 
-### 4.2 Orden de turnos
+### 5.2 Orden de turnos
 **Archivo:** `Assets/Game/Scripts/Combat/Core/TurnQueue.cs`
-
 - Ordena combatientes por `Speed` (descendente).
-- Cada turno rota la lista (el primero pasa al final).
-- Elimina personajes muertos en cada ciclo.
+- Rota la lista para simular turnos continuos.
+- Elimina muertos en cada ciclo con `RemoveDead()`.
 
----
-
-### 4.3 Acciones y resolución
+### 5.3 Resolución de acciones
 **Archivo:** `Assets/Game/Scripts/Combat/Core/ActionResolver.cs`
+- Si la acción implementa `IMultiTargetCombatAction`, ejecuta sobre la lista completa.
+- Si no, usa solo el primer objetivo.
 
-- Si la acción implementa `IMultiTargetCombatAction`, se ejecuta en todos los objetivos.
-- Si no, se ejecuta solo con el primer objetivo.
-
----
-
-### 4.4 Personajes de combate
+### 5.4 Personajes de combate
 **Archivos:**
 - `BaseCharacter.cs`
 - `PlayerCharacter.cs`
 - `EnemyCharacter.cs`
 
-#### BaseCharacter
-- Gestiona estadísticas runtime y estados (`IStatusEffect`).
-- Expone métodos: `TakeDamage`, `Heal`, `ModifyStat`.
-- Maneja `StatsChanged` y `Defeated`.
+**BaseCharacter**:
+- Contiene `CharacterStats` y `RuntimeStats`.
+- Mantiene una lista de `IStatusEffect` activos.
+- Lanza eventos `StatsChanged` y `Defeated`.
+- En rama dev, `runtimeStats` es `SerializeField` para inspección visual en Unity.
 
-#### PlayerCharacter
-- Usa un `IActionSelector` (UI) para decidir acciones.
-- Si no hay selector, ataca automáticamente.
-- Expone constructores de acciones (ataque, defender, habilidad, ítem, huir).
+**PlayerCharacter**:
+- Usa un `IActionSelector` (UI) para decidir.
+- Si no hay selector, ejecuta ataque básico automático.
+- Provee métodos para construir acciones (`CreateBasicAttack`, `CreateAbility`, etc.).
 
-#### EnemyCharacter
+**EnemyCharacter**:
 - Usa un `IAIController` para decidir.
-- Si no hay IA, realiza ataque básico.
+- Si no hay IA, realiza ataque básico automático.
 
----
-
-### 4.5 Estadísticas runtime
+### 5.5 Estadísticas runtime
 **Archivo:** `Assets/Game/Scripts/Combat/Core/RuntimeStats.cs`
+- Copia valores base desde `CharacterStats`.
+- Aplica modificadores temporales por efectos.
+- Protege mínimos (`MaxHealth >= 1`).
+- En rama dev, los valores base/modificadores son visibles en el inspector.
 
-- Copia valores desde `CharacterStats`.
-- Aplica modificadores temporales.
-- Protege valores mínimos (ej. `MaxHealth` >= 1).
-
----
-
-### 4.6 Condición de victoria
+### 5.6 Condición de victoria
 **Archivo:** `Assets/Game/Scripts/Combat/Core/BasicVictoryCondition.cs`
-
 - Victoria: ningún enemigo vivo.
-- Derrota: ningún jugador vivo.
-- En caso de ambos muertos, se considera derrota.
+- Derrota: ningún jugador vivo (o ambos bandos muertos).
+
+### 5.7 Encuentros por colisión
+**Archivo:** `Assets/Game/Scripts/Combat/Core/PlayerEncounter.cs`
+- `OnCollisionEnter()` añade el enemigo colisionado al `CombatManager`.
+- Llama a `StartCombat()` automáticamente.
+- Requiere `Collider` en ambos y `Rigidbody` en al menos uno.
+- Recomiendo `autoStart = false` en el `CombatManager` para evitar que inicie al cargar escena.
 
 ---
 
-## 5. Acciones disponibles
-### 5.1 Ataque básico
+## 6. Acciones disponibles
+### 6.1 Ataque básico
 **Archivo:** `Combat/Actions/BasicAttackAction.cs`
 - Daño = `Attack - (Defense / 2)` con mínimo 1.
 - Probabilidad de crítico según `Luck`.
 
-### 5.2 Defender
+### 6.2 Defender
 **Archivo:** `Combat/Actions/DefendAction.cs`
 - Aplica un `StatModifierEffect` temporal a `Memoria` (defensa).
 
-### 5.3 Huir
+### 6.3 Huir
 **Archivo:** `Combat/Actions/FleeAction.cs`
-- Llama a `CombatManager.TryFlee`.
-- Probabilidad = `baseFleeChance + Luck * 0.01f`.
+- Invoca `CombatManager.TryFlee()`.
 
-### 5.4 Habilidades matemáticas
+### 6.4 Habilidades
 **Archivo:** `Combat/Actions/MathAbilityAction.cs`
-- Usa `AbilityData` para decidir efecto.
-- Soporta objetivos múltiples.
-- Efectos disponibles:
-  - Daño
-  - Debuff Inteligencia
-  - Debuff Memoria
-  - Buff Memoria
-  - Curación
+- Usa `AbilityData` para elegir efecto y objetivos.
+- Soporta objetivos múltiples cuando aplica.
 
-### 5.5 Uso de ítems
+### 6.5 Uso de ítems
 **Archivo:** `Combat/Actions/UseItemAction.cs`
-- Ejecuta efecto según `ItemEffectType`.
-- Nota: el ítem **no se consume** automáticamente (esto debe añadirse si se desea inventario real).
+- Ejecuta efectos según `ItemEffectType`.
+- No consume el ítem automáticamente (requiere inventario si se desea).
 
 ---
 
-## 6. Efectos de estado
+## 7. Efectos de estado
 **Archivo:** `Combat/Effects/StatModifierEffect.cs`
-
-- Aplica una modificación de estadística por X turnos.
-- Se aplica una sola vez y se revierte al terminar.
-- Se reduce `RemainingTurns` en cada turno.
+- Aplica un modificador temporal a una estadística.
+- Se revierte al terminar su duración.
+- La duración se reduce en cada turno (`Tick`).
 
 ---
 
-## 7. IA de enemigos
+## 8. IA de enemigos
 **Archivo:** `Combat/AI/RandomEnemyAIController.cs`
-
 - Decide entre ataque básico o habilidad.
-- `abilityChance` define la probabilidad de usar habilidad.
-- Usa `CombatManager.GetTargetsFor` para objetivos válidos.
+- `abilityChance` define probabilidad de usar habilidad.
+- Usa `CombatManager.GetTargetsFor()` para objetivos válidos.
 
 ---
 
-## 8. UI de combate
+## 9. UI de combate
 **Archivo:** `Combat/UI/BattleUIController.cs`
 
 ### Flujo
 1. `CombatManager` llama a `PlayerCharacter.ChooseAction()`.
-2. `BattleUIController.RequestAction()` muestra el menú principal.
-3. El jugador presiona acción/objetivo.
+2. `BattleUIController.RequestAction()` abre el menú principal.
+3. El jugador selecciona acción/objetivo.
 4. `SubmitAction()` envía la decisión a `CombatManager`.
 
-### Paneles
-- **ActionMenuPanel**: atacar/defender/huir.
-- **TargetSelectPanel**: selección de objetivo.
-- **AbilityMenuPanel**: habilidades.
-- **ItemMenuPanel**: ítems.
-- **OverlayPanel**: panel opcional.
-
-### Logs
+### Detalles internos
+- `activePlayer` guarda el jugador que está decidiendo.
+- `pendingAction` se usa cuando hay que elegir objetivo.
+- `ShowPanel()` activa/desactiva paneles para mantener UI limpia.
 - `CombatLog` actualiza `messageLogText` con mensajes del combate.
 
 ---
 
-## 9. Datos de juego (ScriptableObjects)
+## 10. Datos de juego (ScriptableObjects)
+**Ubicación de assets en rama dev:** `Assets/Game/Scriptable Objects/`
+
 ### CharacterStats
 **Archivo:** `Combat/Data/CharacterStats.cs`
 - Define stats base y habilidades iniciales.
@@ -216,9 +218,9 @@ El proyecto implementa un **RPG por turnos** con los siguientes bloques principa
 
 ---
 
-## 10. Extensiones recomendadas
+## 11. Extensiones recomendadas
 - Crear nuevas acciones implementando `ICombatAction`.
 - Crear estados nuevos implementando `IStatusEffect`.
-- Añadir un sistema de inventario real para consumir ítems.
-- Reemplazar la IA aleatoria por árboles de decisión.
-- Generar UI dinámica en base a datos (habilidades e ítems del personaje).
+- Añadir un inventario real para consumir ítems.
+- Reemplazar la IA aleatoria por decisiones más complejas.
+- Generar UI dinámica basada en datos del personaje.
