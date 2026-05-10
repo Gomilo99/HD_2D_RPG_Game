@@ -7,7 +7,7 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
     [SerializeField] protected CharacterStats stats;
     [SerializeField] protected List<ItemData> startingItems = new List<ItemData>();
 
-    protected RuntimeStats runtimeStats;
+    [SerializeField] protected RuntimeStats runtimeStats;
     private readonly List<IStatusEffect> statusEffects = new List<IStatusEffect>();
 
     public event Action<ICombatant> StatsChanged;

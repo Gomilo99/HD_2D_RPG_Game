@@ -49,6 +49,11 @@ public class CombatManager : MonoBehaviour, IFleeHandler
         StartNextTurn();
     }
 
+    // Método para agregar enemigos en el Combat Manager (Usar para generación dinámica)
+    public void SetEnemyToList(BaseCharacter character)
+    {
+        enemyParty.Add(character);
+    }
     public void ExecuteAction(ICombatant user, ICombatAction action, IReadOnlyList<ICombatant> targets)
     {
         if (!combatActive || user == null || action == null)

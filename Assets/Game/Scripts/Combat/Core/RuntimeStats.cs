@@ -3,18 +3,25 @@ using UnityEngine;
 [System.Serializable]
 public class RuntimeStats
 {
-    public int MaxHealth { get; private set; }
-    public int CurrentHealth { get; private set; }
+    [SerializeField] private int maxHealth;
+    [SerializeField] private int currentHealth;
+    [SerializeField] private int baseIntelligence;
+    [SerializeField] private int baseMemory;
+    [SerializeField] private int baseSpeed;
+    [SerializeField] private int baseLuck;
 
-    public int BaseIntelligence { get; private set; }
-    public int BaseMemory { get; private set; }
-    public int BaseSpeed { get; private set; }
-    public int BaseLuck { get; private set; }
+    [SerializeField] private int intelligenceModifier;
+    [SerializeField] private int memoryModifier;
+    [SerializeField] private int speedModifier;
+    [SerializeField] private int luckModifier;
 
-    private int intelligenceModifier;
-    private int memoryModifier;
-    private int speedModifier;
-    private int luckModifier;
+    public int MaxHealth => maxHealth;
+    public int CurrentHealth => currentHealth;
+
+    public int BaseIntelligence => baseIntelligence;
+    public int BaseMemory => baseMemory;
+    public int BaseSpeed => baseSpeed;
+    public int BaseLuck => baseLuck;
 
     public int Intelligence => Mathf.Max(0, BaseIntelligence + intelligenceModifier);
     public int Memory => Mathf.Max(0, BaseMemory + memoryModifier);
@@ -44,12 +51,12 @@ public class RuntimeStats
 
     private void Initialize(int maxHealth, int intelligence, int memory, int speed, int luck)
     {
-        MaxHealth = Mathf.Max(1, maxHealth);
-        CurrentHealth = MaxHealth;
-        BaseIntelligence = Mathf.Max(0, intelligence);
-        BaseMemory = Mathf.Max(0, memory);
-        BaseSpeed = Mathf.Max(0, speed);
-        BaseLuck = Mathf.Max(0, luck);
+        this.maxHealth = Mathf.Max(1, maxHealth);
+        currentHealth = this.maxHealth;
+        baseIntelligence = Mathf.Max(0, intelligence);
+        baseMemory = Mathf.Max(0, memory);
+        baseSpeed = Mathf.Max(0, speed);
+        baseLuck = Mathf.Max(0, luck);
     }
 
     public void ApplyDamage(int amount)
@@ -59,7 +66,7 @@ public class RuntimeStats
             return;
         }
 
-        CurrentHealth = Mathf.Max(0, CurrentHealth - amount);
+        currentHealth = Mathf.Max(0, currentHealth - amount);
     }
 
     public void Heal(int amount)
@@ -69,7 +76,7 @@ public class RuntimeStats
             return;
         }
 
-        CurrentHealth = Mathf.Min(MaxHealth, CurrentHealth + amount);
+        currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
     }
 
     public void ModifyStat(StatType stat, int amount)
