@@ -149,7 +149,7 @@ public class CombatManager : MonoBehaviour, IFleeHandler
             return false;
         }
 
-        float chance = Mathf.Clamp01(baseFleeChance + combatant.Luck * 0.01f);
+        float chance = Mathf.Clamp01(combatant.Luck * 0.01f + baseFleeChance);
         bool success = UnityEngine.Random.value <= chance;
 
         if (success)

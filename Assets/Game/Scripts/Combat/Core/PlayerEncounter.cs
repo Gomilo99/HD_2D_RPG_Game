@@ -6,7 +6,11 @@ public class PlayerEncounter : MonoBehaviour
     [SerializeField] private CombatManager combatManager;
     void OnCollisionEnter(Collision collision)
     {
-        combatManager.SetEnemyToList(gameObject.GetComponent<BaseCharacter>());
-        combatManager.StartCombat();
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            combatManager.SetEnemyToList(collision.gameObject.GetComponent<BaseCharacter>());
+            combatManager.StartCombat();
+        }
+        
     }
 }

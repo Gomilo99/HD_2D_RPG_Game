@@ -223,5 +223,5 @@ MonoBehaviour:
   seed: 0
   minValue: 0
   maxValue: 99
-  minInterval: 0.5
-  maxInterval: 1.5
+  minInterval: 2
+  maxInterval: 2

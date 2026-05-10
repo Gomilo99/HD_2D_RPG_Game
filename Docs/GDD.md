@@ -31,16 +31,18 @@
 ## Sistemas de juego
 ### Exploración
 - Movimiento del jugador, interacción con el entorno.
+- Apertura de cofres.
 
 ### Combate
-- Sistema por turnos / híbrido (por definir).
+El sistema de combate consiste en derrotar al enemigo utilizando las funciones matemáticas y objetos.
+- Sistema por turnos (por definir).
 - Uso de habilidades, ítems y estados.
 
 ### Progresión
-- Niveles, experiencia y mejora de estadísticas (por definir).
+- Niveles, experiencia, mejora de estadísticas y equipamiento de objetos (por definir).
 
 ### Economía
-- Moneda, tiendas y crafting (por definir).
+- Moneda, tiendas (por definir).
 
 ## Controles
 - Teclado/mandos (por definir detalle).
@@ -48,6 +50,18 @@
 
 ## UI/UX
 - Ver `Docs/Esquemas-UI.md` para esquemas actuales y propuestos.
+- Batallas:
+  - Panel de Menu de acción, selección de funciones a invocar, selección de objetos a usar, selección de enemigo.
+  - Overlay con  estadisticas de personajes
+  - Overlay para visualizar la vidad de los enemigos.
+- Mundo:
+  - Minimapa
+  - Dinero
+  - Panel con personajes, vida y estados alterados.
+  - Menu de acciones y sus interacciones
+    - Visualizar estadísticas de personajes donde poder equipar objetos.
+    - Inventario donde se puede utilzar objetos de curación.
+    - Opciones: Control de sonido, salir del juego, volver al menu principal 
 
 ## Arte y audio
 - **Arte**: Por definir estilo y paleta.
