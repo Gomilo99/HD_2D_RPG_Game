@@ -64,7 +64,7 @@ Crea estos assets en una carpeta como `Assets/Game/Data/`:
 ### 5.1 Estadísticas de personajes
 - **Create → RPG → Character Stats** (`CharacterStats`)
 - Configura:
-  - `characterName`, `maxCordura`, `inteligencia`, `memoria`, `rapidez`, `fealdad`.
+- `characterName`, `maxCordura` (salud/cordura), `inteligencia`, `memoria`, `rapidez`, `fealdad`.
   - `startingAbilities`: lista de habilidades iniciales.
 
 ### 5.2 Habilidades
