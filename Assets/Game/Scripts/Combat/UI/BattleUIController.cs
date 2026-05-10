@@ -1,6 +1,6 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class BattleUIController : MonoBehaviour, IActionSelector
 {
@@ -10,7 +10,10 @@ public class BattleUIController : MonoBehaviour, IActionSelector
     [SerializeField] private GameObject abilityMenuPanel;
     [SerializeField] private GameObject itemMenuPanel;
     [SerializeField] private GameObject overlayPanel;
-    [SerializeField] private Text messageLogText;
+    [SerializeField] private TextMeshProUGUI messageLogText;
+    [SerializeField, Min(1)] private int maxLogLines = 6;
+
+    private readonly Queue<string> logLines = new Queue<string>();
 
     private PlayerCharacter activePlayer;
     private ICombatAction pendingAction;
@@ -145,7 +148,19 @@ public class BattleUIController : MonoBehaviour, IActionSelector
     {
         if (messageLogText != null)
         {
-            messageLogText.text = message;
+            if (maxLogLines <= 1)
+            {
+                messageLogText.text = message;
+                return;
+            }
+
+            logLines.Enqueue(message);
+            while (logLines.Count > maxLogLines)
+            {
+                logLines.Dequeue();
+            }
+
+            messageLogText.text = string.Join("\n", logLines);
         }
     }
 }
