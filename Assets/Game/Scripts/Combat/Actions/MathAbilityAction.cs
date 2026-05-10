@@ -58,6 +58,14 @@ public class MathAbilityAction : ICombatAction, IMultiTargetCombatAction
             case AbilityEffectType.Heal:
                 target.Heal(ability.power);
                 break;
+            case AbilityEffectType.Poison:
+                // Aplica veneno: daño por turno igual a power, durante durationTurns turnos.
+                target.ApplyStatusEffect(new PoisonStatusEffect(ability.abilityName, ability.power, ability.durationTurns));
+                break;
+            case AbilityEffectType.Paralyze:
+                // Aplica parálisis: el objetivo pierde durationTurns turnos de acción.
+                target.ApplyStatusEffect(new ParalysisStatusEffect(ability.abilityName, ability.durationTurns));
+                break;
         }
     }
 }

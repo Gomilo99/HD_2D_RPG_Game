@@ -25,10 +25,98 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
     public int CurrentHealth => runtimeStats?.CurrentHealth ?? 0;
     public IReadOnlyList<ItemData> Items => startingItems;
 
+    /// <summary>
+    /// Devuelve true si al menos un efecto de estado activo implementa IActionBlockingEffect,
+    /// impidiendo que este combatiente actúe durante su turno.
+    /// </summary>
+    public bool IsActionBlocked
+    {
+        get
+        {
+            foreach (IStatusEffect effect in statusEffects)
+            {
+                if (effect is IActionBlockingEffect)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
     protected virtual void Awake()
     {
         runtimeStats = new RuntimeStats(stats);
     }
+
+    public void TakeDamage(int amount)
+    {
+        if (runtimeStats == null)
+        {
+            return;
+        }
+
+        runtimeStats.ApplyDamage(amount);
+        StatsChanged?.Invoke(this);
+
+        if (!IsAlive)
+        {
+            Defeated?.Invoke(this);
+        }
+    }
+
+    public void Heal(int amount)
+    {
+        if (runtimeStats == null)
+        {
+            return;
+        }
+
+        runtimeStats.Heal(amount);
+        StatsChanged?.Invoke(this);
+    }
+
+    public void ModifyStat(StatType stat, int amount)
+    {
+        if (runtimeStats == null)
+        {
+            return;
+        }
+
+        runtimeStats.ModifyStat(stat, amount);
+        StatsChanged?.Invoke(this);
+    }
+
+    public void ApplyStatusEffect(IStatusEffect effect)
+    {
+        if (effect == null)
+        {
+            return;
+        }
+
+        effect.Apply(this);
+        statusEffects.Add(effect);
+        StatsChanged?.Invoke(this);
+    }
+
+    public void TickStatusEffects()
+    {
+        for (int i = statusEffects.Count - 1; i >= 0; i--)
+        {
+            IStatusEffect effect = statusEffects[i];
+            effect.Tick(this);
+            if (effect.RemainingTurns <= 0)
+            {
+                effect.Remove(this);
+                statusEffects.RemoveAt(i);
+            }
+        }
+    }
+
+    public abstract void ChooseAction(CombatManager combatManager);
+}
+
 
     public void TakeDamage(int amount)
     {

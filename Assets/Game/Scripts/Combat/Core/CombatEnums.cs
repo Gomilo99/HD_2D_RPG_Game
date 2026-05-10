@@ -13,7 +13,11 @@ public enum AbilityEffectType
     DebuffIntelligence,
     DebuffMemory,
     BuffMemory,
-    Heal
+    Heal,
+    /// <summary>Envenena al objetivo: aplica daño por turno durante varios turnos.</summary>
+    Poison,
+    /// <summary>Paraliza al objetivo: pierde su próximo turno de acción.</summary>
+    Paralyze
 }
 
 public enum AbilityTargetType

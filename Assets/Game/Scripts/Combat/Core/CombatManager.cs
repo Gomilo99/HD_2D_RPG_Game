@@ -184,6 +184,16 @@ public class CombatManager : MonoBehaviour, IFleeHandler
         }
 
         currentCombatant.TickStatusEffects();
+
+        // Si el combatiente está bloqueado (ej: parálisis), se omite su turno.
+        if (currentCombatant.IsActionBlocked)
+        {
+            Log($"{currentCombatant.Name} está paralizado y pierde su turno.");
+            TurnStarted?.Invoke(currentCombatant);
+            EndTurn();
+            return;
+        }
+
         awaitingPlayerAction = currentCombatant is PlayerCharacter;
         TurnStarted?.Invoke(currentCombatant);
         currentCombatant.ChooseAction(this);
