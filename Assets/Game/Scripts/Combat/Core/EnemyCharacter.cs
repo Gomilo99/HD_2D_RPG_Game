@@ -5,12 +5,16 @@ public class EnemyCharacter : BaseCharacter
 {
     [SerializeField] private MonoBehaviour aiControllerComponent;
 
+    [Header("Progresión")]
+    [SerializeField] private LootTable lootTable;
+
     private IAIController aiController;
 
     protected override void Awake()
     {
         base.Awake();
         aiController = aiControllerComponent as IAIController;
+        Defeated += OnDefeated;
     }
 
     public override void ChooseAction(CombatManager combatManager)
@@ -43,4 +47,47 @@ public class EnemyCharacter : BaseCharacter
 
         combatManager.ExecuteAction(this, decision.Action, decision.Targets);
     }
+
+    // ── Privados ──────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Se invoca cuando el enemigo es derrotado.
+    /// Evalúa la tabla de loot y distribuye experiencia al equipo.
+    /// </summary>
+    private void OnDefeated(ICombatant combatant)
+    {
+        if (lootTable == null)
+        {
+            return;
+        }
+
+        lootTable.Evaluate();
+
+        // Distribuye la experiencia entre los miembros vivos del equipo.
+        if (PlayerData.Instance == null)
+        {
+            return;
+        }
+
+        int exp = lootTable.ExperienceReward;
+        if (exp <= 0)
+        {
+            return;
+        }
+
+        foreach (BaseCharacter member in PlayerData.Instance.PartyMembers)
+        {
+            if (member == null || !member.IsAlive)
+            {
+                continue;
+            }
+
+            CharacterLevel levelComp = member.GetComponent<CharacterLevel>();
+            if (levelComp != null)
+            {
+                levelComp.GainExperience(exp);
+            }
+        }
+    }
 }
+
