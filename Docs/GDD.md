@@ -1,10 +1,11 @@
 # Game Design Document (GDD)
 
 ## Resumen
-- **Nombre del proyecto**: HD_2D_RPG_Game
-- **Género**: RPG
-- **Estilo visual**: HD-2D (por definir detalle)
-- **Plataforma objetivo**: Por definir
+- **Nombre del proyecto**: Facyt & Hunger
+- **Género**: Turn Based RPG
+- **Estilo visual**: HD-2D 
+  La idea es poder combinar algo de arte contemplativo, fantasy oscura y elementos colegio o universidad. Elementos arquitectonicos de la universidad derruidos y desolados.
+- **Plataforma objetivo**: Se pretende compartirlo por web y móbiles, la version de Windows sería la versión principal y una versión de linux se construiría en función de la demanda.
 
 ## Visión
 - **Pilares de diseño**:
@@ -13,7 +14,7 @@
   - Por definir
 
 ## Público objetivo
-- Por definir
+- El juego sirve de crítica al decaimiento de los espacios e infraestructura de la Universidad de Carabobo. El público principal son los propios estudiantes de Facyt; jóvenes de entre 17 y 25 años en edad estudiantil con gusto por los videojuegos y específicamente los juegos de rol.
 
 ## Bucle principal (core loop)
 1. Exploración
