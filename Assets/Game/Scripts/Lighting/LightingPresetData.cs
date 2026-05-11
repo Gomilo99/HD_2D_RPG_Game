@@ -3,8 +3,8 @@ using UnityEngine.Rendering;
 
 /// <summary>
 /// ScriptableObject que define un preset de atmósfera de iluminación para el mundo HD-2D.
-/// Cada preset controla luz ambiental, intensidad de luces 2D de acento, color de cielo,
-/// y parámetros de post-proceso (color grading, viñeta, bloom).
+/// Cada preset controla luz ambiental, color de cielo y parámetros de post-proceso
+/// (color grading, viñeta, bloom).
 ///
 /// Presets recomendados para el vertical slice:
 /// - Pueblo (día): luz cálida, intensidad alta, bloom mínimo.
@@ -23,7 +23,7 @@ public class LightingPresetData : ScriptableObject
     public string presetName = "Preset";
 
     [Header("Luz global / ambiental")]
-    [Tooltip("Color de la luz global (Global Light 2D o ambient light).")]
+    [Tooltip("Color de la luz global (luz direccional principal o ambient light).")]
     public Color globalLightColor = Color.white;
 
     [Tooltip("Intensidad de la luz global (0 = oscuridad total, 1 = máxima).")]

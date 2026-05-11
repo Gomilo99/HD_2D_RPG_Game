@@ -129,11 +129,11 @@ Cómo hacerlo:
 - **Mundo**: interacción, triggers, eventos, transición de escenas.
 - **UX transversal**: feedback visual/sonoro, accesibilidad, telemetría básica.
 
-## Iluminación y sombras para ambiente 2D HD (URP 2D)
-- Base con **Global Light 2D** suave (día/noche por bioma/escena).
-- Luces de acento con **Point/Freeform Light 2D** (interiores, antorchas, magia).
-- **Shadow Caster 2D** en arquitectura/props relevantes (no en todo, por rendimiento/ruido visual).
-- Usar **normal maps** en sprites clave (personajes, props importantes) para look HD-2D.
+## Iluminación y sombras para ambiente HD (URP 3D)
+- Base con **luz direccional** suave (día/noche por bioma/escena).
+- Luces de acento con **point/spot/area** (interiores, antorchas, magia).
+- Sombras solo en arquitectura/props relevantes (no en todo, por rendimiento/ruido visual).
+- Usar **normal maps** en sprites clave (personajes, props importantes) con material lit/Shader Graph.
 - Separar capas visuales (fondo, mid, gameplay, foreground) y ajustar iluminación por capa.
 - Añadir postproceso leve (color grading/viñeta/bloom mínimo) para cohesión, sin “lavar” pixel-art.
 - Definir 2–3 “presets de atmósfera” reutilizables (pueblo, cueva, noche) para consistencia.

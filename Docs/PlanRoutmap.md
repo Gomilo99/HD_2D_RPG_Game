@@ -1,9 +1,9 @@
-Sí puedes usar luces 3D y 2D en el mismo proyecto, **pero no es buena idea mezclarlas en la misma cámara/flujo al inicio** (más complejidad y bugs para un perfil junior).
+Sí puedes usar luces 3D y 2D en el mismo proyecto, **pero ahora conviene mantenerte en 3D** para evitar complejidad y bugs (especialmente como perfil junior).
 En tu repo ahora estás en URP con renderers forward (``Assets/Settings/PC_Renderer.asset, Mobile_Renderer.asset``), así que mi recomendación práctica es:
 
-1. **Vertical slice: priorizar 2D Lights para sprites jugables** (Global/Point + Shadow Caster 2D + normal maps en elementos clave).
-2. Mantener luces 3D solo en escenas/elementos puntuales donde realmente aporten.
-3. Si luego quieres mezcla avanzada, hacerlo en una fase posterior con pipeline/cámaras separadas.
+1. **Vertical slice: priorizar luces 3D** (direccional principal + puntuales/área de acento + presets de atmósfera).
+2. Mantener el número de luces bajo control y usar post-proceso para cohesión.
+3. Si luego quieres 2D lights, hacerlo en una fase posterior con pipeline/cámaras separadas.
 
 ## Roadmap (orden recomendado, alcance moderado y divertido)
 - [ ] Fase 0: Congelar alcance del vertical slice (1 mapa, 1 combate completo, 1 cofre, 1 tienda, 1 transición).
@@ -17,10 +17,10 @@ En tu repo ahora estás en URP con renderers forward (``Assets/Settings/PC_Rende
 
 ## Implementación paso a paso (por aspecto nuevo)
 1) Iluminación HD-2D
-    - [ ] Crear renderer 2D y usarlo en la escena del slice.
+    - [ ] Mantener renderer forward 3D actual en la escena del slice.
     - [ ] Configurar 3 presets: pueblo, interior, noche.
-    - [ ] Añadir Shadow Caster 2D solo en arquitectura/props importantes.
-    - [ ] Normal maps en sprites clave (jugador, enemigo principal, props protagonistas).
+    - [ ] Ajustar luces direccional y puntuales/área solo donde aporten.
+    - [ ] Normal maps en sprites clave con material lit/Shader Graph si hace falta.
     - [ ] Validar rendimiento en PC y móvil.
 2) Mundo + encuentro
     - [ ] Patrulla enemigo + persecución + trigger de combate.

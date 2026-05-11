@@ -10,14 +10,11 @@ aprovechando URP con Volume de post-proceso para lograr el estilo HD-2D.
 
 El proyecto usa **URP Forward (3D)** como pipeline base. Para sprites HD-2D se recomienda:
 
-1. **Luces 3D para el entorno**: luz direccional como "sol", luces puntuales para antorchas y magia.
-2. **Global Light 2D / Point Light 2D (opcional)**: si se migra a un renderer 2D, dan sombras
-   sobre sprites con `Shadow Caster 2D` y normal maps.
-3. **Post-proceso (Volume)**: Bloom, Viñeta y Color Grading para cohesión visual.
-4. **Normal maps en sprites clave**: jugador, enemigo protagonista, props importantes.
+1. **Luces 3D para el entorno**: luz direccional como "sol", luces puntuales/spot/área para antorchas y magia.
+2. **Post-proceso (Volume)**: Bloom, Viñeta y Color Grading para cohesión visual.
+3. **Normal maps en sprites clave**: jugador, enemigo protagonista, props importantes.
 
-> **Nota:** No mezclar el renderer 3D y el 2D en la misma cámara al inicio.
-> Migrar a renderer 2D en una fase posterior cuando el equipo tenga más experiencia.
+> **Nota:** Mantén el número de luces 3D bajo control y apóyate en post-proceso para el look final.
 
 ---
 
@@ -111,7 +108,7 @@ transitionDuration:  1.5
 ## Normal maps en sprites (opcional avanzado)
 
 Para añadir profundidad a los sprites con iluminación 3D:
-1. En el Sprite Renderer, cambiar el material a `Sprites/Lit`.
+1. En el Sprite Renderer, cambiar el material a un shader lit (Shader Graph o URP lit compatible).
 2. Crear un normal map para el sprite (en Photoshop, GIMP o Sprite Illuminator).
 3. Asignar el normal map en el material.
 4. La luz 3D del entorno creará sombreado en el sprite.
