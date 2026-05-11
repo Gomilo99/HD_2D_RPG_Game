@@ -21,6 +21,21 @@ y transiciones de escena.
 
 ---
 
+## Integración in-game (pasos Unity)
+1. Crear o abrir la escena del mundo (ej: `Level1`).
+2. Colocar al jugador con `PlayerController`, `PlayerInput` y `PlayerInteractionDetector`.
+3. Asignar el tag `"Player"` al jugador.
+4. Añadir un `SceneTransitionManager` para gestionar entradas/salidas.
+5. Configurar enemigos:
+   - Añadir `EnemyPatrolController` con waypoints.
+   - Añadir `PlayerEncounter` si deben iniciar combate por colisión.
+6. Configurar interactuables:
+   - `InteractableChest` con items y dinero.
+   - `ShopNPC` con catálogo.
+7. Verificar colliders y rigidbodies para detecciones y colisiones.
+
+---
+
 ## Configurar EnemyPatrolController
 
 1. Añadir el componente al GameObject del enemigo (que debe tener `Rigidbody`).

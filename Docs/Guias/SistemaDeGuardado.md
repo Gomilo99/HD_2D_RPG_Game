@@ -26,9 +26,9 @@ Los archivos se guardan en `Application.persistentDataPath`:
 
 ---
 
-## Cómo configurar en la escena
+## Integración in-game (pasos Unity)
 
-1. Crear un GameObject vacío y añadir el componente `SaveManager`.
+1. Crear un GameObject vacío y añadir el componente `SaveManager` (idealmente en una escena persistente).
 2. Crear otro GameObject y añadir `PlayerData` (singleton del equipo/dinero).
 3. En el mundo, colocar un objeto con `SaveCheckpoint`:
    - Asignar `saveSlot = 1` (o 2/3).

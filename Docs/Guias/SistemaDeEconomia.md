@@ -20,6 +20,18 @@ compra/venta, el loot que sueltan los enemigos y el dinero del jugador.
 
 ---
 
+## Integración in-game (pasos Unity)
+1. Crear un GameObject persistente con `PlayerData` y `PlayerInventory` (una sola vez).
+2. Crear assets de economía en `Assets/Game/Scriptable Objects/`:
+   - `ItemData` (consumibles con `value`)
+   - `EquipmentData` (equipamiento)
+   - `LootTable` (XP + dinero + drops)
+3. Asignar `LootTable` a cada `EnemyCharacter` que deba soltar recompensas.
+4. Colocar `InteractableChest` en el mundo y configurar `items` y `moneyReward`.
+5. Colocar `ShopNPC` y configurar `catalogItems`; asegurar `PlayerInteractionDetector` en el jugador.
+
+---
+
 ## Flujo del dinero
 
 ```

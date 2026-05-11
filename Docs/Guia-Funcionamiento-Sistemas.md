@@ -7,6 +7,15 @@ El proyecto implementa un **RPG por turnos** con estos bloques:
 - **Datos de juego** basados en ScriptableObjects.
 - **UI de combate** para selección de acciones y objetivos.
 
+## Dónde ver la implementación in-game
+Para pasos de configuración en Unity por sistema:
+- Combate: `Docs/Guias/SistemaDeCombate.md` → sección **Integración in-game**.
+- Mundo: `Docs/Guias/SistemaDeMundo.md` → sección **Integración in-game**.
+- Economía: `Docs/Guias/SistemaDeEconomia.md` → sección **Integración in-game**.
+- Progresión: `Docs/Guias/SistemaDeProgresion.md` → sección **Integración in-game**.
+- Guardado: `Docs/Guias/SistemaDeGuardado.md` → sección **Integración in-game**.
+- Iluminación: `Docs/Guias/SistemaDeIluminacion.md` → sección **Integración in-game**.
+
 ---
 
 ## 1. Sistema de movimiento del jugador

@@ -43,6 +43,21 @@ Assets/Game/Scripts/Combat/
 
 ---
 
+## Integración in-game (pasos Unity)
+1. Crear o abrir la escena de combate (ej: `CombatScene`).
+2. Crear un GameObject `CombatManager` y añadir el componente `CombatManager`.
+3. Colocar los `PlayerCharacter` y `EnemyCharacter` en la escena y asignarlos en:
+   - `playerParty` (jugadores)
+   - `enemyParty` (enemigos)
+4. En cada `PlayerCharacter`, asignar `actionSelectorComponent` a un `BattleUIController`.
+5. En cada `EnemyCharacter`, asignar `aiControllerComponent` (ej: `RandomEnemyAIController`).
+6. Crear un Canvas de combate y configurar `BattleUIController` con paneles y botones.
+7. Ajustar `autoStart`:
+   - `true` para iniciar al cargar escena.
+   - `false` si el combate se dispara desde el mundo (ver `PlayerEncounter` / `StartCombat()`).
+
+---
+
 ## Corrida en frío — Flujo completo de un turno
 
 **Escenario:** Turno del jugador → elige Ataque básico → derrota al enemigo → victoria.

@@ -67,9 +67,9 @@ transitionDuration:  1.5
 
 ---
 
-## Cómo configurar en la escena
+## Integración in-game (pasos Unity)
 
-1. Crar 3 assets de `LightingPresetData` (Pueblo, Interior, Noche).
+1. Crear 3 assets de `LightingPresetData` (Pueblo, Interior, Noche).
 2. Crear un `Volume Global` en la escena:
    - Modo: Global
    - Añadir overrides: **Color Adjustments**, **Bloom**, **Vignette**

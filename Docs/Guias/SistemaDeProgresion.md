@@ -16,6 +16,15 @@ crecimiento de estadísticas y desbloqueo de habilidades nuevas.
 
 ---
 
+## Integración in-game (pasos Unity)
+1. Crear un asset `LevelGrowthTable` para cada personaje o arquetipo.
+2. En cada miembro del equipo, añadir `CharacterLevel` y asignar su `growthTable`.
+3. Confirmar que `PlayerData.PartyMembers` referencia a los personajes activos.
+4. En enemigos, asignar `LootTable` con `experienceReward` para distribuir XP.
+5. (Opcional) En UI de combate, combinar habilidades iniciales + desbloqueadas.
+
+---
+
 ## Cómo configurar una tabla de progresión
 
 1. Clic derecho en el Project → **RPG/Level Growth Table** → renombrar (ej: `Alicia_GrowthTable`).

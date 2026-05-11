@@ -39,6 +39,32 @@
     - `CombatFeedbackService.cs`: flash de daño, SFX, VFX.
     - `TelemetryService.cs`: métricas de sesión.
 
+## Esquema de organización (código y documentación)
+```
+Assets/
+└─ Game/
+   ├─ Scripts/                (código por sistema)
+   ├─ Scriptable Objects/      (datos configurables)
+   ├─ Prefabs/                (prefabs jugables y de UI)
+   ├─ Scenes/                 (mundo, combate, menús)
+   ├─ Sprites/                (arte 2D)
+   └─ Materials/              (materiales y shaders)
+
+Docs/
+├─ Guia-Uso.md
+├─ Guia-Implementacion.md
+├─ Guia-Funcionamiento-Sistemas.md
+├─ Guia-Integracion-InGame.md
+├─ Esquemas-UI.md
+└─ Guias/
+   ├─ SistemaDeCombate.md
+   ├─ SistemaDeEconomia.md
+   ├─ SistemaDeGuardado.md
+   ├─ SistemaDeIluminacion.md
+   ├─ SistemaDeMundo.md
+   └─ SistemaDeProgresion.md
+```
+
 ## Guías detalladas por sistema
 Ver la carpeta `Docs/Guias/` para guías con corrida en frío de cada sistema:
 - `SistemaDeCombate.md`
