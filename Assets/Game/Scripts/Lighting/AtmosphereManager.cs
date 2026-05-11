@@ -189,9 +189,8 @@ public class AtmosphereManager : MonoBehaviour
         if (colorAdjOverride != null)
         {
             colorAdjOverride.active = true;
-            colorAdjOverride.colorFilter.value = preset.globalLightColor;
+            colorAdjOverride.colorFilter.value = TemperatureToColor(preset.colorTemperature);
             colorAdjOverride.saturation.value = preset.saturation;
-            colorAdjOverride.colorTemperature.value = preset.colorTemperature;
         }
     }
 
@@ -218,11 +217,19 @@ public class AtmosphereManager : MonoBehaviour
 
         if (colorAdjOverride != null)
         {
-            colorAdjOverride.colorTemperature.value = Mathf.Lerp(
-                presetActual.colorTemperature, destino.colorTemperature, t);
+            float temp = Mathf.Lerp(presetActual.colorTemperature, destino.colorTemperature, t);
+            colorAdjOverride.colorFilter.value = TemperatureToColor(temp);
             colorAdjOverride.saturation.value = Mathf.Lerp(
                 presetActual.saturation, destino.saturation, t);
         }
+    }
+
+    private Color TemperatureToColor(float temp)
+    {
+        float t = Mathf.InverseLerp(-100f, 100f, temp);
+        Color cold = new Color(0.6f, 0.7f, 1f);
+        Color warm = new Color(1f, 0.85f, 0.6f);
+        return Color.Lerp(cold, warm, t);
     }
 
     // ── Inicialización de overrides ───────────────────────────────────────────
