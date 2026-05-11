@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -38,7 +39,7 @@ public class PlayerEncounter : MonoBehaviour
         }
         else
         {
-            IniciarTransicionACombate();
+            IniciarTransicionACombate(collision.gameObject);
         }
     }
 
@@ -61,14 +62,38 @@ public class PlayerEncounter : MonoBehaviour
         combatManager.StartCombat();
     }
 
-    private void IniciarTransicionACombate()
+    private void IniciarTransicionACombate(GameObject enemyObject)
     {
         if (SceneTransitionManager.Instance == null)
         {
             Debug.LogWarning("PlayerEncounter: SceneTransitionManager no encontrado en la escena.", this);
             return;
-        }  
+        }
 
+        List<CharacterStats> partyStats = new List<CharacterStats>();
+        if (PlayerData.Instance != null)
+        {
+            foreach (BaseCharacter member in PlayerData.Instance.PartyMembers)
+            {
+                if (member != null && member.Stats != null)
+                {
+                    partyStats.Add(member.Stats);
+                }
+            }
+        }
+
+        List<EnemyCharacter> enemyPrefabs = new List<EnemyCharacter>();
+        EnemyEncounter encounter = enemyObject != null ? enemyObject.GetComponent<EnemyEncounter>() : null;
+        if (encounter != null && encounter.EnemyPrefab != null)
+        {
+            enemyPrefabs.Add(encounter.EnemyPrefab);
+        }
+        else
+        {
+            Debug.LogWarning("PlayerEncounter: EnemyEncounter no asignado en el enemigo. Se usaran valores por defecto en combate.", this);
+        }
+
+        CombatContext.SetContext(partyStats, enemyPrefabs);
         SceneTransitionManager.Instance.GoToCombat();
     }
 }

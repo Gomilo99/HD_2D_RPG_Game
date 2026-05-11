@@ -24,6 +24,7 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
     public int MaxHealth => runtimeStats?.MaxHealth ?? 0;
     public int CurrentHealth => runtimeStats?.CurrentHealth ?? 0;
     public IReadOnlyList<ItemData> Items => startingItems;
+    public CharacterStats Stats => stats;
 
     /// <summary>
     /// Devuelve true si al menos un efecto de estado activo implementa IActionBlockingEffect,
@@ -47,6 +48,17 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
 
     protected virtual void Awake()
     {
+        runtimeStats = new RuntimeStats(stats);
+    }
+
+    public void Initialize(CharacterStats newStats, IReadOnlyList<ItemData> itemsOverride = null)
+    {
+        stats = newStats;
+        if (itemsOverride != null)
+        {
+            startingItems = new List<ItemData>(itemsOverride);
+        }
+
         runtimeStats = new RuntimeStats(stats);
     }
 

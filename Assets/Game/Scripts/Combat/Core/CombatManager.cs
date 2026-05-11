@@ -49,6 +49,40 @@ public class CombatManager : MonoBehaviour, IFleeHandler
         StartNextTurn();
     }
 
+    public void SetPlayerParty(IEnumerable<BaseCharacter> party)
+    {
+        playerParty.Clear();
+        if (party == null)
+        {
+            return;
+        }
+
+        foreach (BaseCharacter member in party)
+        {
+            if (member != null)
+            {
+                playerParty.Add(member);
+            }
+        }
+    }
+
+    public void SetEnemyParty(IEnumerable<BaseCharacter> party)
+    {
+        enemyParty.Clear();
+        if (party == null)
+        {
+            return;
+        }
+
+        foreach (BaseCharacter member in party)
+        {
+            if (member != null)
+            {
+                enemyParty.Add(member);
+            }
+        }
+    }
+
     // Método para agregar enemigos en el Combat Manager (Usar para generación dinámica)
     public void SetEnemyToList(BaseCharacter character)
     {
@@ -139,6 +173,29 @@ public class CombatManager : MonoBehaviour, IFleeHandler
                 return WrapSingle(user);
             default:
                 return WrapSingle(PickRandom(foes));
+        }
+    }
+
+    public IReadOnlyList<ICombatant> GetValidTargets(AbilityTargetType targetType, ICombatant user)
+    {
+        bool isPlayer = players.Contains(user);
+        IReadOnlyList<ICombatant> allies = isPlayer ? GetAlivePlayers() : GetAliveEnemies();
+        IReadOnlyList<ICombatant> foes = isPlayer ? GetAliveEnemies() : GetAlivePlayers();
+
+        switch (targetType)
+        {
+            case AbilityTargetType.SingleEnemy:
+                return foes;
+            case AbilityTargetType.AllEnemies:
+                return foes;
+            case AbilityTargetType.SingleAlly:
+                return allies;
+            case AbilityTargetType.AllAllies:
+                return allies;
+            case AbilityTargetType.Self:
+                return WrapSingle(user);
+            default:
+                return foes;
         }
     }
 
