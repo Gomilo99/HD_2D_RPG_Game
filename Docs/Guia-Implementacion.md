@@ -49,13 +49,18 @@ Ver la carpeta `Docs/Guias/` para guías con corrida en frío de cada sistema:
 - `SistemaDeEconomia.md`
 
 ## Datos de combate
-Los datos de habilidades, items y estadísticas están definidos en:
+Los datos (clases ScriptableObject) de habilidades, items y estadísticas están definidos en:
 - `Assets/Game/Scripts/Combat/Data/`
   - `AbilityData.cs`
   - `ItemData.cs`
   - `CharacterStats.cs`
 
-Crea ScriptableObjects en una carpeta de datos (por ejemplo `Assets/Game/Data/`) para mantener los assets configurables.
+Los assets configurables se almacenan en la rama dev en:
+- `Assets/Game/Scriptable Objects/`
+  - `Abilities/`
+  - `Items/`
+  - `Players/`
+  - `Enemies/`
 
 ## Input
 - Archivo principal de acciones: `Assets/InputSystem_Actions.inputactions`.
@@ -65,6 +70,33 @@ Crea ScriptableObjects en una carpeta de datos (por ejemplo `Assets/Game/Data/`)
 ## Prefabs y escenas
 - Prefabs: `Assets/Game/Prefabs/`
 - Escenas: `Assets/Game/Scenes/`
+
+## UI de combate (configuración esencial)
+1. Crea un `Canvas` con **EventSystem** activo.
+2. Añade paneles: `ActionMenuPanel`, `TargetSelectPanel`, `AbilityMenuPanel`, `ItemMenuPanel`, `OverlayPanel`.
+3. Crea un objeto `BattleUIController` y asigna:
+   - Referencias a paneles.
+   - `messageLogText` con un **Text** (UI).
+4. Botones de acciones básicas:
+   - **Attack** → `BattleUIController.OnAttackPressed`
+   - **Defend** → `BattleUIController.OnDefendPressed`
+   - **Flee** → `BattleUIController.OnFleePressed`
+5. Botones de habilidades/ítems (configuración adicional):
+   - Crea un botón por habilidad/ítem.
+   - En **OnClick** asigna:
+     - `OnAbilityPressed(AbilityData)` con el asset de habilidad.
+     - `OnItemPressed(ItemData)` con el asset de ítem.
+6. Selección de objetivos:
+   - Crea un botón por objetivo y enlázalo a `OnTargetSelected(BaseCharacter)`.
+   - Arrastra el GameObject del objetivo al campo del evento.
+
+## Inicio automático de batalla por colisión (rama dev)
+Para arrancar el combate al chocar jugador/enemigo:
+1. Añade `PlayerEncounter` (`Assets/Game/Scripts/Combat/Core/PlayerEncounter.cs`) al enemigo.
+2. Asigna `combatManager` en el inspector.
+3. Asegura que **jugador y enemigo** tengan `Collider` y que al menos uno tenga `Rigidbody` (requisito de `OnCollisionEnter`).
+4. En `CombatManager`, deja `autoStart = false` para evitar inicio inmediato.
+5. `PlayerEncounter` llama a `CombatManager.SetEnemyToList()` y luego `StartCombat()` cuando ocurre la colisión.
 
 ## Reglas básicas de organización
 - Cada sistema nuevo debe vivir bajo `Assets/Game/Scripts/<Sistema>/`.
