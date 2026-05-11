@@ -22,7 +22,7 @@ public class PlayerEncounter : MonoBehaviour
     [SerializeField] private CombatManager combatManager;
 
     [Tooltip("Si es true, inicia el combate en la misma escena (modo prototipo).\n" +
-             "Si es false, delega a SceneTransitionManager para cargar la escena de combate.")]
+            "Si es false, delega a SceneTransitionManager para cargar la escena de combate.")]
     [SerializeField] private bool combatInSameScene = true;
 
     void OnCollisionEnter(Collision collision)
@@ -67,7 +67,7 @@ public class PlayerEncounter : MonoBehaviour
         {
             Debug.LogWarning("PlayerEncounter: SceneTransitionManager no encontrado en la escena.", this);
             return;
-        }
+        }  
 
         SceneTransitionManager.Instance.GoToCombat();
     }
