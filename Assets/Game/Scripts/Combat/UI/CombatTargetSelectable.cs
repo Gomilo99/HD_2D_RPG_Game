@@ -4,6 +4,9 @@ public class CombatTargetSelectable : MonoBehaviour
 {
     [SerializeField] private BattleUIController battleUI;
     [SerializeField] private BaseCharacter character;
+    public void SetBattleUI(BattleUIController ui){
+        battleUI = ui;
+    }
 
     private void Awake()
     {
@@ -17,7 +20,7 @@ public class CombatTargetSelectable : MonoBehaviour
     {
         if (battleUI == null)
         {
-            battleUI = FindObjectOfType<BattleUIController>();
+            battleUI = FindFirstObjectByType<BattleUIController>();
         }
     }
 

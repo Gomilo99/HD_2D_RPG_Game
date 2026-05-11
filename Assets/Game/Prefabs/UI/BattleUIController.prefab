@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3436241168180165631
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7983851182060314930}
+  - component: {fileID: 6804707257640638787}
+  m_Layer: 0
+  m_Name: BattleUIController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7983851182060314930
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3436241168180165631}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6804707257640638787
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3436241168180165631}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb865fe8c48fee04292611eabf954826, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BattleUIController
+  combatManager: {fileID: 1102959050529303447, guid: 8fe428b19525c6f41a423bd3f9154243, type: 3}
+  actionMenuPanel: {fileID: 526698729504619744, guid: c770dfef9f2b1294c9921f8299e7f84b, type: 3}
+  targetSelectPanel: {fileID: 3554795296136587470, guid: 16b315a9aec641a48b67feeeeda1a36e, type: 3}
+  abilityMenuPanel: {fileID: 818774455752583920, guid: ae452a0f568f0544ea4e899e66e6909b, type: 3}
+  itemMenuPanel: {fileID: 4963387895373941856, guid: 91d4c1fb0cd91ab4d814738452ec879c, type: 3}
+  overlayPanel: {fileID: 5058072421977795081, guid: f3f35718f1accf74cb0044defdfda164, type: 3}
+  messageLogText: {fileID: 0}
+  maxLogLines: 10
+  abilityButtonContainer: {fileID: 0}
+  itemButtonContainer: {fileID: 0}
+  actionButtonPrefab: {fileID: 8035870103214323219, guid: 204025f780b51bb46b92fb9140cc7968, type: 3}

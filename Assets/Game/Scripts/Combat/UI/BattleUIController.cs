@@ -200,6 +200,7 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             }
 
             button.onClick.AddListener(() => OnAbilityPressed(abilityLocal));
+            button.onClick.AddListener(() => targetSelectPanel.SetActive(true));
             spawnedButtons.Add(button);
         }
     }

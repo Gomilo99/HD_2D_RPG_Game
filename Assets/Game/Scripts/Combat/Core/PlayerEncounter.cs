@@ -84,11 +84,19 @@ public class PlayerEncounter : MonoBehaviour
 
         List<EnemyCharacter> enemyPrefabs = new List<EnemyCharacter>();
         EnemyEncounter encounter = enemyObject != null ? enemyObject.GetComponent<EnemyEncounter>() : null;
-        if (encounter != null && encounter.EnemyPrefab != null)
+        if (encounter != null)
         {
-            enemyPrefabs.Add(encounter.EnemyPrefab);
+            if (encounter.EnemyParty != null && encounter.EnemyParty.Count > 0)
+            {
+                enemyPrefabs.AddRange(encounter.EnemyParty);
+            }
+            else if (encounter.EnemyPrefab != null)
+            {
+                enemyPrefabs.Add(encounter.EnemyPrefab);
+            }
         }
-        else
+
+        if (enemyPrefabs.Count == 0)
         {
             Debug.LogWarning("PlayerEncounter: EnemyEncounter no asignado en el enemigo. Se usaran valores por defecto en combate.", this);
         }

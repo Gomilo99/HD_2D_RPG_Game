@@ -4,6 +4,7 @@ using UnityEngine;
 public class CombatSceneBootstrapper : MonoBehaviour
 {
     [SerializeField] private CombatManager combatManager;
+    [SerializeField] private BattleUIController battleUI;
 
     [Header("Prefabs")]
     [SerializeField] private PlayerCharacter playerPrefab;
@@ -22,6 +23,11 @@ public class CombatSceneBootstrapper : MonoBehaviour
         {
             Debug.LogWarning("CombatSceneBootstrapper: CombatManager no asignado.", this);
             return;
+        }
+
+        if (battleUI == null)
+        {
+            battleUI = FindFirstObjectByType<BattleUIController>();
         }
 
         List<BaseCharacter> playerInstances = SpawnPlayers();
@@ -57,6 +63,7 @@ public class CombatSceneBootstrapper : MonoBehaviour
 
             PlayerCharacter instance = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
             instance.Initialize(partyStats[i]);
+            WireTargetSelectable(instance);
             spawned.Add(instance);
         }
 
@@ -84,11 +91,25 @@ public class CombatSceneBootstrapper : MonoBehaviour
             {
                 continue;
             }
-
             EnemyCharacter instance = Instantiate(enemyPrefab, spawnPoint.position, spawnPoint.rotation);
+            WireTargetSelectable(instance);
             spawned.Add(instance);
         }
 
         return spawned;
+    }
+
+    private void WireTargetSelectable(BaseCharacter character)
+    {
+        if (battleUI == null || character == null)
+        {
+            return;
+        }
+
+        CombatTargetSelectable selectable = character.GetComponentInChildren<CombatTargetSelectable>();
+        if (selectable != null)
+        {
+            selectable.SetBattleUI(battleUI);
+        }
     }
 }
