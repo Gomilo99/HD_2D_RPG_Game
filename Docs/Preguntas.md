@@ -1,7 +1,5 @@
 # Preguntas para Mejorar el Game-Design
 
-Necesito poder enviar distintos prefabs que estén basados en uno para los enemigos y los players pero que sean específicos para cada tipo de enemigo o tipo de personaje. 
-
 ## Resumen
 Este documento sirve de guía mental para mejorar ideas, refinar experiencias, corregir problemas estructurales y establecer las bases de diseño que van a regir el proyecto.
 

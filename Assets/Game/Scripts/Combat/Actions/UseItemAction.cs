@@ -16,6 +16,11 @@ public class UseItemAction : ICombatAction
             return;
         }
 
+        if (PlayerInventory.Instance == null || !PlayerInventory.Instance.UseItem(item))
+        {
+            return;
+        }
+
         switch (item.effectType)
         {
             case ItemEffectType.Heal:

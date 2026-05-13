@@ -5,6 +5,8 @@ public class CombatSceneBootstrapper : MonoBehaviour
 {
     [SerializeField] private CombatManager combatManager;
     [SerializeField] private BattleUIController battleUI;
+    [SerializeField] private ActionSelectorPanel actionSelectorPanel;
+    [SerializeField] private bool debugLogs = false;
 
     [Header("Prefabs")]
     [SerializeField] private PlayerCharacter playerPrefab;
@@ -30,8 +32,32 @@ public class CombatSceneBootstrapper : MonoBehaviour
             battleUI = FindFirstObjectByType<BattleUIController>();
         }
 
+        if (actionSelectorPanel == null && battleUI != null)
+        {
+            actionSelectorPanel = battleUI.GetComponentInChildren<ActionSelectorPanel>(true);
+        }
+
+        if (actionSelectorPanel != null && battleUI != null)
+        {
+            actionSelectorPanel.SetBattleUI(battleUI);
+        }
+
+        if (battleUI == null)
+        {
+            Debug.LogWarning("CombatSceneBootstrapper: BattleUIController no encontrado. Los jugadores actuaran en automatico.", this);
+        }
+        else if (debugLogs)
+        {
+            Debug.Log("CombatSceneBootstrapper: BattleUIController encontrado.", this);
+        }
+
         List<BaseCharacter> playerInstances = SpawnPlayers();
         List<BaseCharacter> enemyInstances = SpawnEnemies();
+
+        if (debugLogs)
+        {
+            Debug.Log($"CombatSceneBootstrapper: Players={playerInstances.Count}, Enemies={enemyInstances.Count}.", this);
+        }
 
         combatManager.SetPlayerParty(playerInstances);
         combatManager.SetEnemyParty(enemyInstances);
@@ -63,6 +89,11 @@ public class CombatSceneBootstrapper : MonoBehaviour
 
             PlayerCharacter instance = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
             instance.Initialize(partyStats[i]);
+            IActionSelector selector = actionSelectorPanel != null && battleUI != null ? actionSelectorPanel : battleUI;
+            if (selector != null)
+            {
+                instance.SetActionSelector(selector);
+            }
             WireTargetSelectable(instance);
             spawned.Add(instance);
         }

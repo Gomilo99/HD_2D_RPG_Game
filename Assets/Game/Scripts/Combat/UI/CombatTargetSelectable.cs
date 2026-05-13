@@ -1,10 +1,16 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class CombatTargetSelectable : MonoBehaviour
+public class CombatTargetSelectable : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private BattleUIController battleUI;
     [SerializeField] private BaseCharacter character;
-    public void SetBattleUI(BattleUIController ui){
+    [SerializeField] private TargetHighlight targetHighlight;
+
+    private int lastSelectFrame = -1;
+
+    public void SetBattleUI(BattleUIController ui)
+    {
         battleUI = ui;
     }
 
@@ -13,6 +19,11 @@ public class CombatTargetSelectable : MonoBehaviour
         if (character == null)
         {
             character = GetComponent<BaseCharacter>();
+        }
+
+        if (targetHighlight == null)
+        {
+            targetHighlight = GetComponentInChildren<TargetHighlight>();
         }
     }
 
@@ -26,9 +37,43 @@ public class CombatTargetSelectable : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (battleUI != null && character != null)
+        TrySelect();
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        TrySelect();
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (targetHighlight != null && battleUI != null && battleUI.IsTargetSelectionActive)
         {
-            battleUI.OnTargetSelected(character);
+            targetHighlight.SetHovered(true);
         }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (targetHighlight != null)
+        {
+            targetHighlight.SetHovered(false);
+        }
+    }
+
+    private void TrySelect()
+    {
+        if (battleUI == null || character == null || !battleUI.IsTargetSelectionActive)
+        {
+            return;
+        }
+
+        if (Time.frameCount == lastSelectFrame)
+        {
+            return;
+        }
+
+        lastSelectFrame = Time.frameCount;
+        battleUI.OnTargetSelected(character);
     }
 }

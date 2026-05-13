@@ -16,6 +16,7 @@ public class BattleUIController : MonoBehaviour, IActionSelector
     [SerializeField] private Transform abilityButtonContainer;
     [SerializeField] private Transform itemButtonContainer;
     [SerializeField] private Button actionButtonPrefab;
+    [SerializeField] private bool debugLogs = false;
 
     private readonly Queue<string> logLines = new Queue<string>();
     private readonly List<Button> spawnedButtons = new List<Button>();
@@ -23,6 +24,8 @@ public class BattleUIController : MonoBehaviour, IActionSelector
 
     private PlayerCharacter activePlayer;
     private ICombatAction pendingAction;
+
+    public bool IsTargetSelectionActive => pendingAction != null;
 
     private void OnDisable()
     {
@@ -52,6 +55,12 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         ShowPanel(targetSelectPanel, false);
         ShowPanel(abilityMenuPanel, false);
         ShowPanel(itemMenuPanel, false);
+
+        if (debugLogs)
+        {
+            string playerName = activePlayer != null ? activePlayer.Name : "(null)";
+            Debug.Log($"BattleUIController: RequestAction para {playerName}.", this);
+        }
     }
 
     public void OnAttackPressed()
@@ -59,6 +68,11 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         if (activePlayer == null || combatManager == null)
         {
             return;
+        }
+
+        if (debugLogs)
+        {
+            Debug.Log("BattleUIController: Attack pressed.", this);
         }
 
         pendingAction = activePlayer.CreateBasicAttack();
@@ -72,6 +86,11 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             return;
         }
 
+        if (debugLogs)
+        {
+            Debug.Log("BattleUIController: Defend pressed.", this);
+        }
+
         SubmitAction(activePlayer.CreateDefend(), new List<ICombatant> { activePlayer });
     }
 
@@ -80,6 +99,11 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         if (activePlayer == null || combatManager == null)
         {
             return;
+        }
+
+        if (debugLogs)
+        {
+            Debug.Log("BattleUIController: Flee pressed.", this);
         }
 
         SubmitAction(activePlayer.CreateFleeAction(combatManager), new List<ICombatant> { activePlayer });
@@ -111,6 +135,11 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             return;
         }
 
+        if (PlayerInventory.Instance == null || !PlayerInventory.Instance.HasItem(item))
+        {
+            return;
+        }
+
         pendingAction = activePlayer.CreateUseItem(item);
         ShowTargetSelection(AbilityTargetType.SingleAlly);
     }
@@ -120,6 +149,11 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         if (activePlayer == null)
         {
             return;
+        }
+
+        if (debugLogs)
+        {
+            Debug.Log("BattleUIController: Open ability menu.", this);
         }
 
         BuildAbilityButtons();
@@ -136,6 +170,11 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             return;
         }
 
+        if (debugLogs)
+        {
+            Debug.Log("BattleUIController: Open item menu.", this);
+        }
+
         BuildItemButtons();
         ShowPanel(itemMenuPanel, true);
         ShowPanel(actionMenuPanel, false);
@@ -148,6 +187,11 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         if (pendingAction == null || combatManager == null || target == null)
         {
             return;
+        }
+
+        if (debugLogs)
+        {
+            Debug.Log($"BattleUIController: Target selected {target.Name}.", this);
         }
 
         SubmitAction(pendingAction, new List<ICombatant> { target });
@@ -170,6 +214,7 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         ShowPanel(actionMenuPanel, false);
         ShowPanel(abilityMenuPanel, false);
         ShowPanel(itemMenuPanel, false);
+        SetPanelRaycast(targetSelectPanel, false);
         PreviewTargets(targetType);
     }
 
@@ -181,12 +226,41 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         }
     }
 
+    private void SetPanelRaycast(GameObject panel, bool blockRaycasts)
+    {
+        if (panel == null)
+        {
+            return;
+        }
+
+        CanvasGroup canvasGroup = panel.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = panel.AddComponent<CanvasGroup>();
+        }
+
+        canvasGroup.blocksRaycasts = blockRaycasts;
+        canvasGroup.interactable = blockRaycasts;
+    }
+
     private void BuildAbilityButtons()
     {
         ClearButtons(abilityButtonContainer);
         if (actionButtonPrefab == null || abilityButtonContainer == null)
         {
+            Debug.LogWarning("BattleUIController: actionButtonPrefab o abilityButtonContainer no asignado.", this);
             return;
+        }
+
+        if (activePlayer == null || activePlayer.Abilities.Count == 0)
+        {
+            Debug.LogWarning("BattleUIController: el jugador no tiene habilidades en CharacterStats.", this);
+            return;
+        }
+
+        if (debugLogs)
+        {
+            Debug.Log($"BattleUIController: creando {activePlayer.Abilities.Count} botones de habilidad.", this);
         }
 
         foreach (AbilityData ability in activePlayer.Abilities)
@@ -200,7 +274,6 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             }
 
             button.onClick.AddListener(() => OnAbilityPressed(abilityLocal));
-            button.onClick.AddListener(() => targetSelectPanel.SetActive(true));
             spawnedButtons.Add(button);
         }
     }
@@ -210,17 +283,43 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         ClearButtons(itemButtonContainer);
         if (actionButtonPrefab == null || itemButtonContainer == null)
         {
+            Debug.LogWarning("BattleUIController: actionButtonPrefab o itemButtonContainer no asignado.", this);
             return;
         }
 
-        foreach (ItemData item in activePlayer.Items)
+        PlayerInventory inventory = PlayerInventory.Instance;
+        if (inventory == null)
         {
-            ItemData itemLocal = item;
+            Debug.LogWarning("BattleUIController: PlayerInventory no encontrado.", this);
+            return;
+        }
+
+        if (inventory.Consumables == null || inventory.Consumables.Count == 0)
+        {
+            Debug.LogWarning("BattleUIController: inventario sin consumibles.", this);
+            return;
+        }
+
+        if (debugLogs)
+        {
+            Debug.Log($"BattleUIController: creando {inventory.Consumables.Count} botones de items.", this);
+        }
+
+        foreach (PlayerInventory.ConsumableEntry entry in inventory.Consumables)
+        {
+            if (entry == null || entry.item == null || entry.quantity <= 0)
+            {
+                continue;
+            }
+
+            ItemData itemLocal = entry.item;
             Button button = Instantiate(actionButtonPrefab, itemButtonContainer);
             TextMeshProUGUI label = button.GetComponentInChildren<TextMeshProUGUI>();
             if (label != null)
             {
-                label.text = itemLocal != null ? itemLocal.itemName : "Objeto";
+                label.text = itemLocal != null
+                    ? $"{itemLocal.itemName} x{entry.quantity}"
+                    : "Objeto";
             }
 
             button.onClick.AddListener(() => OnItemPressed(itemLocal));
