@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8c0f5ff44154c8342a241ec1a4afa6e5, type: 3}
-  m_Name: Player-X
+  m_Name: Player-Phi
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
-  characterName: X
-  maxCordura: 60
-  inteligencia: 8
-  memoria: 10
-  rapidez: 6
-  fealdad: 2
+  characterName: Phi
+  maxCordura: 100
+  inteligencia: 10
+  memoria: 5
+  rapidez: 5
+  fealdad: 1
   startingAbilities:
-  - {fileID: 11400000, guid: 7c30e2ec12dd3f9409aca3412d7f943e, type: 2}
-  - {fileID: 11400000, guid: 47e69c53b1eae5047b701cdbe536ce17, type: 2}
+  - {fileID: 11400000, guid: d56e40d541a2eb34e8bb522be6238bdb, type: 2}
+  - {fileID: 11400000, guid: 4f3de6944544a4d44a8fe84968588720, type: 2}

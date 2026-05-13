@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CombatManager : MonoBehaviour, IFleeHandler
 {
+    public static CombatManager Instance { get; private set; }
     [SerializeField] private List<BaseCharacter> playerParty = new List<BaseCharacter>();
     [SerializeField] private List<BaseCharacter> enemyParty = new List<BaseCharacter>();
     [SerializeField] private bool autoStart = true;
@@ -26,6 +27,7 @@ public class CombatManager : MonoBehaviour, IFleeHandler
 
     private void Awake()
     {
+        Instance = this;
         turnQueue = new TurnQueue();
         actionResolver = new ActionResolver();
         victoryCondition = new BasicVictoryCondition();
@@ -102,8 +104,18 @@ public class CombatManager : MonoBehaviour, IFleeHandler
 
         awaitingPlayerAction = false;
         actionResolver.Resolve(user, action, targets);
-        Log($"{user.Name} usa {action.ActionName}.");
+        LogAction(user, action, targets);
         EndTurn();
+    }
+
+    public void LogEvent(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return;
+        }
+
+        Log(message);
     }
 
     public void SubmitPlayerAction(ICombatAction action, IReadOnlyList<ICombatant> targets)
@@ -337,5 +349,33 @@ public class CombatManager : MonoBehaviour, IFleeHandler
     {
         Debug.Log(message, this);
         CombatLog?.Invoke(message);
+    }
+
+    private void LogAction(ICombatant user, ICombatAction action, IReadOnlyList<ICombatant> targets)
+    {
+        if (user == null || action == null)
+        {
+            return;
+        }
+
+        if (targets != null && targets.Count > 0)
+        {
+            string targetNames = string.Join(", ", GetTargetNames(targets));
+            Log($"{user.Name} usa {action.ActionName} en {targetNames}.");
+            return;
+        }
+
+        Log($"{user.Name} usa {action.ActionName}.");
+    }
+
+    private IEnumerable<string> GetTargetNames(IReadOnlyList<ICombatant> targets)
+    {
+        foreach (ICombatant target in targets)
+        {
+            if (target != null)
+            {
+                yield return target.Name;
+            }
+        }
     }
 }

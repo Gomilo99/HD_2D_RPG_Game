@@ -41,6 +41,7 @@ public class PoisonStatusEffect : IStatusEffect
         }
 
         target.TakeDamage(damagePerTurn);
+        CombatManager.Instance?.LogEvent($"{target.Name} sufre {damagePerTurn} de dano por veneno.");
         RemainingTurns -= 1;
     }
 

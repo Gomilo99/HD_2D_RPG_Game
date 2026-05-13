@@ -12,6 +12,7 @@ public class BattleUIController : MonoBehaviour, IActionSelector
     [SerializeField] private GameObject itemMenuPanel;
     [SerializeField] private GameObject overlayPanel;
     [SerializeField] private TextMeshProUGUI messageLogText;
+    [SerializeField] private TextMeshProUGUI turnInfoText;
     [SerializeField, Min(1)] private int maxLogLines = 6;
     [SerializeField] private Transform abilityButtonContainer;
     [SerializeField] private Transform itemButtonContainer;
@@ -36,6 +37,7 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         if (combatManager != null)
         {
             combatManager.CombatLog -= HandleCombatLog;
+            combatManager.TurnStarted -= HandleTurnStarted;
         }
     }
 
@@ -50,6 +52,8 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         if (combatManager != null)
         {
             combatManager.CombatLog += HandleCombatLog;
+            combatManager.TurnStarted -= HandleTurnStarted;
+            combatManager.TurnStarted += HandleTurnStarted;
         }
 
         activePlayer = player;
@@ -59,6 +63,8 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         ShowPanel(targetSelectPanel, false);
         ShowPanel(abilityMenuPanel, false);
         ShowPanel(itemMenuPanel, false);
+
+        HandleTurnStarted(activePlayer);
 
     }
 
@@ -374,5 +380,14 @@ public class BattleUIController : MonoBehaviour, IActionSelector
 
             messageLogText.text = string.Join("\n", logLines);
         }
+    }
+
+    private void HandleTurnStarted(ICombatant combatant)
+    {
+        if (turnInfoText != null)
+        {
+            turnInfoText.text = combatant != null ? $"Turno: {combatant.Name}" : string.Empty;
+        }
+
     }
 }

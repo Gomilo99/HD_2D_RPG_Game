@@ -26,6 +26,11 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
     public IReadOnlyList<ItemData> Items => startingItems;
     public CharacterStats Stats => stats;
 
+    public IReadOnlyList<IStatusEffect> GetStatusEffectsSnapshot()
+    {
+        return new List<IStatusEffect>(statusEffects);
+    }
+
     /// <summary>
     /// Devuelve true si al menos un efecto de estado activo implementa IActionBlockingEffect,
     /// impidiendo que este combatiente actúe durante su turno.
