@@ -47,7 +47,7 @@ public class CombatTargetSelectable : MonoBehaviour, IPointerClickHandler, IPoin
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (targetHighlight != null && battleUI != null && battleUI.IsTargetSelectionActive)
+        if (targetHighlight != null && battleUI != null && battleUI.CanSelectTarget(character))
         {
             targetHighlight.SetHovered(true);
         }
@@ -63,7 +63,7 @@ public class CombatTargetSelectable : MonoBehaviour, IPointerClickHandler, IPoin
 
     private void TrySelect()
     {
-        if (battleUI == null || character == null || !battleUI.IsTargetSelectionActive)
+        if (battleUI == null || character == null || !battleUI.CanSelectTarget(character))
         {
             return;
         }

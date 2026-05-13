@@ -16,16 +16,20 @@ public class BattleUIController : MonoBehaviour, IActionSelector
     [SerializeField] private Transform abilityButtonContainer;
     [SerializeField] private Transform itemButtonContainer;
     [SerializeField] private Button actionButtonPrefab;
-    [SerializeField] private bool debugLogs = false;
 
     private readonly Queue<string> logLines = new Queue<string>();
     private readonly List<Button> spawnedButtons = new List<Button>();
     private readonly List<TargetHighlight> highlightedTargets = new List<TargetHighlight>();
+    private readonly HashSet<BaseCharacter> validTargets = new HashSet<BaseCharacter>();
 
     private PlayerCharacter activePlayer;
     private ICombatAction pendingAction;
 
     public bool IsTargetSelectionActive => pendingAction != null;
+    public bool CanSelectTarget(BaseCharacter target)
+    {
+        return pendingAction != null && target != null && validTargets.Contains(target);
+    }
 
     private void OnDisable()
     {
@@ -56,11 +60,6 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         ShowPanel(abilityMenuPanel, false);
         ShowPanel(itemMenuPanel, false);
 
-        if (debugLogs)
-        {
-            string playerName = activePlayer != null ? activePlayer.Name : "(null)";
-            Debug.Log($"BattleUIController: RequestAction para {playerName}.", this);
-        }
     }
 
     public void OnAttackPressed()
@@ -70,10 +69,6 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             return;
         }
 
-        if (debugLogs)
-        {
-            Debug.Log("BattleUIController: Attack pressed.", this);
-        }
 
         pendingAction = activePlayer.CreateBasicAttack();
         ShowTargetSelection(AbilityTargetType.SingleEnemy);
@@ -86,10 +81,6 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             return;
         }
 
-        if (debugLogs)
-        {
-            Debug.Log("BattleUIController: Defend pressed.", this);
-        }
 
         SubmitAction(activePlayer.CreateDefend(), new List<ICombatant> { activePlayer });
     }
@@ -101,10 +92,6 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             return;
         }
 
-        if (debugLogs)
-        {
-            Debug.Log("BattleUIController: Flee pressed.", this);
-        }
 
         SubmitAction(activePlayer.CreateFleeAction(combatManager), new List<ICombatant> { activePlayer });
     }
@@ -151,10 +138,6 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             return;
         }
 
-        if (debugLogs)
-        {
-            Debug.Log("BattleUIController: Open ability menu.", this);
-        }
 
         BuildAbilityButtons();
         ShowPanel(abilityMenuPanel, true);
@@ -170,10 +153,6 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             return;
         }
 
-        if (debugLogs)
-        {
-            Debug.Log("BattleUIController: Open item menu.", this);
-        }
 
         BuildItemButtons();
         ShowPanel(itemMenuPanel, true);
@@ -189,10 +168,11 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             return;
         }
 
-        if (debugLogs)
+        if (!validTargets.Contains(target))
         {
-            Debug.Log($"BattleUIController: Target selected {target.Name}.", this);
+            return;
         }
+
 
         SubmitAction(pendingAction, new List<ICombatant> { target });
     }
@@ -258,10 +238,6 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             return;
         }
 
-        if (debugLogs)
-        {
-            Debug.Log($"BattleUIController: creando {activePlayer.Abilities.Count} botones de habilidad.", this);
-        }
 
         foreach (AbilityData ability in activePlayer.Abilities)
         {
@@ -300,10 +276,6 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             return;
         }
 
-        if (debugLogs)
-        {
-            Debug.Log($"BattleUIController: creando {inventory.Consumables.Count} botones de items.", this);
-        }
 
         foreach (PlayerInventory.ConsumableEntry entry in inventory.Consumables)
         {
@@ -365,6 +337,8 @@ public class BattleUIController : MonoBehaviour, IActionSelector
                 highlight.SetHighlighted(true);
                 highlightedTargets.Add(highlight);
             }
+
+            validTargets.Add(character);
         }
     }
 
@@ -379,6 +353,7 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         }
 
         highlightedTargets.Clear();
+        validTargets.Clear();
     }
 
     private void HandleCombatLog(string message)

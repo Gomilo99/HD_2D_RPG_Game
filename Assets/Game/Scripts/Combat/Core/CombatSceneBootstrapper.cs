@@ -6,7 +6,6 @@ public class CombatSceneBootstrapper : MonoBehaviour
     [SerializeField] private CombatManager combatManager;
     [SerializeField] private BattleUIController battleUI;
     [SerializeField] private ActionSelectorPanel actionSelectorPanel;
-    [SerializeField] private bool debugLogs = false;
 
     [Header("Prefabs")]
     [SerializeField] private PlayerCharacter playerPrefab;
@@ -46,18 +45,10 @@ public class CombatSceneBootstrapper : MonoBehaviour
         {
             Debug.LogWarning("CombatSceneBootstrapper: BattleUIController no encontrado. Los jugadores actuaran en automatico.", this);
         }
-        else if (debugLogs)
-        {
-            Debug.Log("CombatSceneBootstrapper: BattleUIController encontrado.", this);
-        }
 
         List<BaseCharacter> playerInstances = SpawnPlayers();
         List<BaseCharacter> enemyInstances = SpawnEnemies();
 
-        if (debugLogs)
-        {
-            Debug.Log($"CombatSceneBootstrapper: Players={playerInstances.Count}, Enemies={enemyInstances.Count}.", this);
-        }
 
         combatManager.SetPlayerParty(playerInstances);
         combatManager.SetEnemyParty(enemyInstances);

@@ -218,6 +218,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CombatTargetSelectable
   battleUI: {fileID: 0}
   character: {fileID: 9054116127933482595}
+  targetHighlight: {fileID: 4089081237891363730}
 --- !u!114 &4089081237891363730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -232,6 +233,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::TargetHighlight
   spriteRenderer: {fileID: 3788420132031315021}
   highlightColor: {r: 1, g: 0.9, b: 0.5, a: 1}
+  hoverColor: {r: 1, g: 0.7, b: 0.2, a: 1}
 --- !u!1 &5024944982423539352
 GameObject:
   m_ObjectHideFlags: 0
