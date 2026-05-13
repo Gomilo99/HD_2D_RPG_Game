@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a482fa4a7207fbd49b1f83ee545a0f26, type: 3}
+  m_Name: Equip-AnilloMath
+  m_EditorClassIdentifier: Assembly-CSharp::EquipmentData
+  equipmentName: Anillo Math
+  description: Anillo arcano hecho por los dioses del calculo. Aumenta la inteligencia
+    en 1
+  value: 100
+  corduraModifier: 0
+  inteligenciaModifier: 1
+  memoriaModifier: 0
+  rapidezModifier: 0
+  fealdadModifier: 0
+  abilityPowerMultiplier: 0
+  abilityDurationBonus: 0

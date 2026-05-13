@@ -238,7 +238,7 @@ GameObject:
   - component: {fileID: 475420631160236580}
   - component: {fileID: 4647595773234064711}
   m_Layer: 0
-  m_Name: PlayerCombating
+  m_Name: PlayerCombat-X
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -445,10 +445,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72ab0fdf6413aab4aa622ba96dfa55ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerCharacter
-  stats: {fileID: 11400000, guid: e792bd14abb8b364dbd52341b501e8df, type: 2}
-  startingItems:
-  - {fileID: 11400000, guid: 8878e0de839f7154ca29771ebd5d8147, type: 2}
-  - {fileID: 11400000, guid: a5062ab9836790b4db9b560134bbddb6, type: 2}
+  stats: {fileID: 11400000, guid: c5d26b2b69688b947945139afc8c2b0d, type: 2}
+  startingItems: []
   runtimeStats:
     maxHealth: 0
     currentHealth: 0
@@ -474,7 +472,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombatTargetSelectable
   battleUI: {fileID: 0}
-  character: {fileID: 0}
+  character: {fileID: 7932020727544111888}
 --- !u!114 &4647595773234064711
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -487,5 +485,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baabb1bd27ca0864f9e8729bbec4131e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TargetHighlight
-  spriteRenderer: {fileID: 0}
+  spriteRenderer: {fileID: 7598051307566971494}
   highlightColor: {r: 1, g: 0.9, b: 0.5, a: 1}

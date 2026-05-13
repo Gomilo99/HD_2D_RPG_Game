@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c0f5ff44154c8342a241ec1a4afa6e5, type: 3}
+  m_Name: Enemy-Newton
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
+  characterName: Newton
+  maxCordura: 120
+  inteligencia: 15
+  memoria: 10
+  rapidez: 4
+  fealdad: 0
+  startingAbilities:
+  - {fileID: 11400000, guid: 7c30e2ec12dd3f9409aca3412d7f943e, type: 2}
+  - {fileID: 11400000, guid: 741af0b8332768a4ab21b3c76648328f, type: 2}

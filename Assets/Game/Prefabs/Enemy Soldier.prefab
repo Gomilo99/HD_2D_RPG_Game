@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 7371812327204002431}
   - component: {fileID: 2387371051912773395}
   - component: {fileID: 2416635998738607887}
-  - component: {fileID: 4367176001650283720}
+  - component: {fileID: 4283002928016774419}
   m_Layer: 0
   m_Name: Enemy Soldier
   m_TagString: Enemy
@@ -199,7 +199,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 112
   m_CollisionDetection: 0
---- !u!114 &4367176001650283720
+--- !u!114 &4283002928016774419
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -208,21 +208,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7104807706932742412}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1d93bda674149748b02a47ce4d0c0ae, type: 3}
+  m_Script: {fileID: 11500000, guid: 4e8375f18da5d1b4ba5461bac25674af, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyCharacter
-  stats: {fileID: 11400000, guid: 360435ff99094824bbce4d2434cc8c20, type: 2}
-  startingItems: []
-  runtimeStats:
-    maxHealth: 0
-    currentHealth: 0
-    baseIntelligence: 0
-    baseMemory: 0
-    baseSpeed: 0
-    baseLuck: 0
-    intelligenceModifier: 0
-    memoryModifier: 0
-    speedModifier: 0
-    luckModifier: 0
-  aiControllerComponent: {fileID: 4367176001650283720}
-  lootTable: {fileID: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyEncounter
+  enemyPrefab: {fileID: 1555713839262732486, guid: 9ac2fd4d96994ee46add93c1e0e36d03, type: 3}
+  enemyParty:
+  - {fileID: 0}
+  - {fileID: 0}

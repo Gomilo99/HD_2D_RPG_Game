@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 851785849162561135}
   - component: {fileID: 8862372804860568368}
   m_Layer: 0
-  m_Name: Enemy Combating
+  m_Name: EnemyCombat-ProfMarino
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -130,7 +130,7 @@ MonoBehaviour:
   abilities:
   - {fileID: 11400000, guid: 6b5fb3e1b531deb48bedeaa869cdbb99, type: 2}
   - {fileID: 11400000, guid: 47e69c53b1eae5047b701cdbe536ce17, type: 2}
-  abilityChance: 0.25
+  abilityChance: 0.6
 --- !u!114 &851785849162561135
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baabb1bd27ca0864f9e8729bbec4131e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TargetHighlight
-  spriteRenderer: {fileID: 0}
+  spriteRenderer: {fileID: 5031127382906376378}
   highlightColor: {r: 1, g: 0.9, b: 0.5, a: 1}
 --- !u!114 &8862372804860568368
 MonoBehaviour:
@@ -158,7 +158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CombatTargetSelectable
   battleUI: {fileID: 0}
-  character: {fileID: 0}
+  character: {fileID: 7082683561349594407}
 --- !u!1 &7977727068043984311
 GameObject:
   m_ObjectHideFlags: 0
