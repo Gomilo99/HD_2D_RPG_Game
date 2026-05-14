@@ -28,17 +28,13 @@ using TMPro;
 public class CombatResultController : MonoBehaviour
 {
     [SerializeField] private CombatManager combatManager;
+    [SerializeField] private BattleUIController battleUIController;
 
     [Header("Panel de Victoria")]
     [SerializeField] private GameObject victoryPanel;
-    [SerializeField] private TextMeshProUGUI victoryMessageText;
-    [SerializeField] private Button continueButton;
 
     [Header("Panel de Derrota")]
     [SerializeField] private GameObject defeatPanel;
-    [SerializeField] private TextMeshProUGUI defeatMessageText;
-    [SerializeField] private Button retryButton;
-    [SerializeField] private Button mainMenuButton;
 
     [Header("Transición")]
     [SerializeField] private SceneTransitionManager sceneTransitionManager;
@@ -49,10 +45,20 @@ public class CombatResultController : MonoBehaviour
     private void Awake()
     {
         OcultarPaneles();
+
+        if (sceneTransitionManager == null)
+        {
+            sceneTransitionManager = SceneTransitionManager.Instance;
+        }
     }
 
     private void OnEnable()
     {
+        if (sceneTransitionManager == null)
+        {
+            sceneTransitionManager = SceneTransitionManager.Instance;
+        }
+
         if (combatManager != null)
         {
             combatManager.CombatEnded += OnCombatEnded;
@@ -100,6 +106,7 @@ public class CombatResultController : MonoBehaviour
 
     private void OnCombatEnded(CombatResult result)
     {
+        battleUIController.HideOverlay();
         StartCoroutine(MostrarResultadoConPausa(result));
     }
 
@@ -133,11 +140,6 @@ public class CombatResultController : MonoBehaviour
             return;
         }
 
-        if (victoryMessageText != null)
-        {
-            victoryMessageText.text = "¡Victoria!";
-        }
-
         victoryPanel.SetActive(true);
     }
 
@@ -147,11 +149,6 @@ public class CombatResultController : MonoBehaviour
         {
             Debug.LogWarning("CombatResultController: defeatPanel no está asignado.", this);
             return;
-        }
-
-        if (defeatMessageText != null)
-        {
-            defeatMessageText.text = "Derrota...\n¿Qué deseas hacer?";
         }
 
         defeatPanel.SetActive(true);

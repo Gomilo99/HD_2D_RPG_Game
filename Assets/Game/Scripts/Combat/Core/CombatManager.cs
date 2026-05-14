@@ -104,7 +104,6 @@ public class CombatManager : MonoBehaviour, IFleeHandler
 
         awaitingPlayerAction = false;
         actionResolver.Resolve(user, action, targets);
-        LogAction(user, action, targets);
         EndTurn();
     }
 

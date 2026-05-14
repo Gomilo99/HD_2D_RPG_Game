@@ -390,4 +390,10 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         }
 
     }
+
+    public void HideOverlay(){
+        messageLogText.gameObject.SetActive(false);
+        turnInfoText.gameObject.SetActive(false);
+        overlayPanel.gameObject.SetActive(false);
+    }
 }
