@@ -208,6 +208,7 @@ GameObject:
   - component: {fileID: 5553879812153806479}
   - component: {fileID: 4089081237891363730}
   - component: {fileID: 4805334173566519737}
+  - component: {fileID: 5262801487857615530}
   m_Layer: 0
   m_Name: PlayerCombat BASE
   m_TagString: Player
@@ -356,6 +357,22 @@ MonoBehaviour:
   damageFill: {fileID: 8208903807035894886}
   damageLagDelay: 0.25
   damageLerpSpeed: 4
+--- !u!114 &5262801487857615530
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2643149672014573601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 28a3d7f3a1aea7444b06ecce4b47d438, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CombatantLifeTint
+  target: {fileID: 9054116127933482595}
+  targetHighlight: {fileID: 4089081237891363730}
+  spriteRenderer: {fileID: 3788420132031315021}
+  downedColor: {r: 0.25, g: 0.25, b: 0.25, a: 1}
 --- !u!1 &2870489093482769951
 GameObject:
   m_ObjectHideFlags: 0

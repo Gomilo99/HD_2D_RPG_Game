@@ -12,8 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44385df05fe67174d92ca90239f8af7b, type: 3}
   m_Name: Hab-Revive
   m_EditorClassIdentifier: Assembly-CSharp::AbilityData
-  abilityName: 
-  effectType: 0
-  targetType: 0
-  power: 5
-  durationTurns: 1
+  abilityName: Revivir
+  effectType: 4
+  targetType: 5
+  power: 30
+  reviveByPercent: 1
+  durationTurns: 10
