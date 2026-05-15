@@ -3,6 +3,22 @@
 ## Objetivo
 Esta guía explica **cómo aplicar e integrar en el mundo del juego** los scripts y sistemas técnicos creados en la rama copilot. El foco está en **pasos concretos de Unity** para que el jugador pueda moverse, animarse y entrar a un combate por turnos funcional.
 
+## Mapa rápido de guías por sistema
+- Combate: `Docs/Guias/SistemaDeCombate.md` → sección **Integración in-game**.
+- Mundo/Exploración: `Docs/Guias/SistemaDeMundo.md` → sección **Integración in-game**.
+- Economía: `Docs/Guias/SistemaDeEconomia.md` → sección **Integración in-game**.
+- Progresión: `Docs/Guias/SistemaDeProgresion.md` → sección **Integración in-game**.
+- Guardado: `Docs/Guias/SistemaDeGuardado.md` → sección **Integración in-game**.
+- Iluminación: `Docs/Guias/SistemaDeIluminacion.md` → sección **Integración in-game**.
+
+## Orden sugerido de integración
+1. Mundo (movimiento, interacción, transiciones).
+2. Combate (escena, UI, personajes).
+3. Economía (loot, tienda, cofres).
+4. Progresión (niveles y habilidades).
+5. Guardado (slots + checkpoints).
+6. Iluminación/atmósfera (presets y post-proceso).
+
 ## Requisitos previos
 - Unity **6000.3.6f1** (ver `ProjectSettings/ProjectVersion.txt`).
 - Proyecto abierto desde `HD_2D_RPG_Game`.

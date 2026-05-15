@@ -45,18 +45,49 @@ public class MathAbilityAction : ICombatAction, IMultiTargetCombatAction
                 int mitigation = target.Defense / 2;
                 int damage = Mathf.Max(1, baseDamage - mitigation);
                 target.TakeDamage(damage);
+                CombatManager.Instance?.LogEvent($"{user.Name} usa {ability.abilityName} en {target.Name} por {damage} de dano.");
                 break;
             case AbilityEffectType.DebuffIntelligence:
                 target.ApplyStatusEffect(new StatModifierEffect(ability.abilityName, StatType.Inteligencia, -ability.power, ability.durationTurns));
+                CombatManager.Instance?.LogEvent($"{user.Name} debuffea a {target.Name} (-{ability.power} inteligencia, {ability.durationTurns} turnos).");
                 break;
             case AbilityEffectType.DebuffMemory:
                 target.ApplyStatusEffect(new StatModifierEffect(ability.abilityName, StatType.Memoria, -ability.power, ability.durationTurns));
+                CombatManager.Instance?.LogEvent($"{user.Name} debuffea a {target.Name} (-{ability.power} memoria, {ability.durationTurns} turnos).");
                 break;
             case AbilityEffectType.BuffMemory:
                 target.ApplyStatusEffect(new StatModifierEffect(ability.abilityName, StatType.Memoria, ability.power, ability.durationTurns));
+                CombatManager.Instance?.LogEvent($"{user.Name} buffea a {target.Name} (+{ability.power} memoria, {ability.durationTurns} turnos).");
                 break;
             case AbilityEffectType.Heal:
                 target.Heal(ability.power);
+                CombatManager.Instance?.LogEvent($"{user.Name} cura a {target.Name} por {ability.power}.");
+                break;
+            case AbilityEffectType.Poison:
+                // Aplica veneno: daño por turno igual a power, durante durationTurns turnos.
+                target.ApplyStatusEffect(new PoisonStatusEffect(ability.abilityName, ability.power, ability.durationTurns));
+                CombatManager.Instance?.LogEvent($"{target.Name} queda envenenado ({ability.power} dano/turno, {ability.durationTurns} turnos).");
+                break;
+            case AbilityEffectType.Paralyze:
+                // Aplica parálisis: el objetivo pierde durationTurns turnos de acción.
+                target.ApplyStatusEffect(new ParalysisStatusEffect(ability.abilityName, ability.durationTurns));
+                CombatManager.Instance?.LogEvent($"{target.Name} queda paralizado ({ability.durationTurns} turnos).");
+                break;
+            case AbilityEffectType.Revive:
+                int reviveAmount;
+                if (ability.reviveByPercent)
+                {
+                    float percent = Mathf.Clamp(ability.power, 1, 100) / 100f;
+                    reviveAmount = Mathf.Max(1, Mathf.CeilToInt(target.MaxHealth * percent));
+                    target.Heal(reviveAmount);
+                    CombatManager.Instance?.LogEvent($"{user.Name} revive a {target.Name} con {ability.power}% ({reviveAmount} vida).");
+                }
+                else
+                {
+                    reviveAmount = Mathf.Max(1, ability.power);
+                    target.Heal(reviveAmount);
+                    CombatManager.Instance?.LogEvent($"{user.Name} revive a {target.Name} con {reviveAmount} de vida.");
+                }
                 break;
         }
     }

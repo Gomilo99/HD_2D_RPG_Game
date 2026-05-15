@@ -11,6 +11,7 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
     private readonly List<IStatusEffect> statusEffects = new List<IStatusEffect>();
 
     public event Action<ICombatant> StatsChanged;
+    public event Action<ICombatant, int, int> HealthChanged;
     public event Action<ICombatant> Defeated;
 
     public string Name => stats != null && !string.IsNullOrWhiteSpace(stats.characterName)
@@ -24,9 +25,46 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
     public int MaxHealth => runtimeStats?.MaxHealth ?? 0;
     public int CurrentHealth => runtimeStats?.CurrentHealth ?? 0;
     public IReadOnlyList<ItemData> Items => startingItems;
+    public CharacterStats Stats => stats;
+
+    public IReadOnlyList<IStatusEffect> GetStatusEffectsSnapshot()
+    {
+        return new List<IStatusEffect>(statusEffects);
+    }
+
+    /// <summary>
+    /// Devuelve true si al menos un efecto de estado activo implementa IActionBlockingEffect,
+    /// impidiendo que este combatiente actúe durante su turno.
+    /// </summary>
+    public bool IsActionBlocked
+    {
+        get
+        {
+            foreach (IStatusEffect effect in statusEffects)
+            {
+                if (effect is IActionBlockingEffect)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
 
     protected virtual void Awake()
     {
+        runtimeStats = new RuntimeStats(stats);
+    }
+
+    public void Initialize(CharacterStats newStats, IReadOnlyList<ItemData> itemsOverride = null)
+    {
+        stats = newStats;
+        if (itemsOverride != null)
+        {
+            startingItems = new List<ItemData>(itemsOverride);
+        }
+
         runtimeStats = new RuntimeStats(stats);
     }
 
@@ -37,7 +75,13 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
             return;
         }
 
+        int previousHealth = runtimeStats.CurrentHealth;
         runtimeStats.ApplyDamage(amount);
+        int currentHealth = runtimeStats.CurrentHealth;
+        if (currentHealth != previousHealth)
+        {
+            HealthChanged?.Invoke(this, previousHealth, currentHealth);
+        }
         StatsChanged?.Invoke(this);
 
         if (!IsAlive)
@@ -53,7 +97,13 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
             return;
         }
 
+        int previousHealth = runtimeStats.CurrentHealth;
         runtimeStats.Heal(amount);
+        int currentHealth = runtimeStats.CurrentHealth;
+        if (currentHealth != previousHealth)
+        {
+            HealthChanged?.Invoke(this, previousHealth, currentHealth);
+        }
         StatsChanged?.Invoke(this);
     }
 
@@ -66,6 +116,20 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
 
         runtimeStats.ModifyStat(stat, amount);
         StatsChanged?.Invoke(this);
+    }
+
+    public void SetCurrentHealth(int value, bool notify = true)
+    {
+        if (runtimeStats == null)
+        {
+            return;
+        }
+
+        runtimeStats.SetCurrentHealth(value);
+        if (notify)
+        {
+            StatsChanged?.Invoke(this);
+        }
     }
 
     public void ApplyStatusEffect(IStatusEffect effect)

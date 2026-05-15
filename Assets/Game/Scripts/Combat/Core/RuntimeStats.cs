@@ -97,4 +97,9 @@ public class RuntimeStats
                 break;
         }
     }
+
+    public void SetCurrentHealth(int value)
+    {
+        currentHealth = Mathf.Clamp(value, 0, maxHealth);
+    }
 }

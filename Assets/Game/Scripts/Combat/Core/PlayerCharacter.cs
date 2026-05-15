@@ -15,6 +15,12 @@ public class PlayerCharacter : BaseCharacter
         actionSelector = actionSelectorComponent as IActionSelector;
     }
 
+    public void SetActionSelector(IActionSelector selector)
+    {
+        actionSelector = selector;
+        actionSelectorComponent = selector as MonoBehaviour;
+    }
+
     public override void ChooseAction(CombatManager combatManager)
     {
         if (combatManager == null)

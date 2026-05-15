@@ -7,4 +7,7 @@ public class ItemData : ScriptableObject
     [TextArea] public string description;
     public ItemEffectType effectType = ItemEffectType.Heal;
     public int power = 10;
+
+    [Tooltip("Precio de venta/compra en la tienda.")]
+    public int value = 50;
 }

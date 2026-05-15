@@ -15,5 +15,5 @@ MonoBehaviour:
   abilityName: Integral
   effectType: 0
   targetType: 0
-  power: 5
+  power: 7
   durationTurns: 1

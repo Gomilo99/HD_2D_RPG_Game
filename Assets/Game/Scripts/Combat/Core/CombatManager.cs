@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CombatManager : MonoBehaviour, IFleeHandler
 {
+    public static CombatManager Instance { get; private set; }
     [SerializeField] private List<BaseCharacter> playerParty = new List<BaseCharacter>();
     [SerializeField] private List<BaseCharacter> enemyParty = new List<BaseCharacter>();
     [SerializeField] private bool autoStart = true;
@@ -26,6 +27,7 @@ public class CombatManager : MonoBehaviour, IFleeHandler
 
     private void Awake()
     {
+        Instance = this;
         turnQueue = new TurnQueue();
         actionResolver = new ActionResolver();
         victoryCondition = new BasicVictoryCondition();
@@ -49,6 +51,40 @@ public class CombatManager : MonoBehaviour, IFleeHandler
         StartNextTurn();
     }
 
+    public void SetPlayerParty(IEnumerable<BaseCharacter> party)
+    {
+        playerParty.Clear();
+        if (party == null)
+        {
+            return;
+        }
+
+        foreach (BaseCharacter member in party)
+        {
+            if (member != null)
+            {
+                playerParty.Add(member);
+            }
+        }
+    }
+
+    public void SetEnemyParty(IEnumerable<BaseCharacter> party)
+    {
+        enemyParty.Clear();
+        if (party == null)
+        {
+            return;
+        }
+
+        foreach (BaseCharacter member in party)
+        {
+            if (member != null)
+            {
+                enemyParty.Add(member);
+            }
+        }
+    }
+
     // Método para agregar enemigos en el Combat Manager (Usar para generación dinámica)
     public void SetEnemyToList(BaseCharacter character)
     {
@@ -68,8 +104,17 @@ public class CombatManager : MonoBehaviour, IFleeHandler
 
         awaitingPlayerAction = false;
         actionResolver.Resolve(user, action, targets);
-        Log($"{user.Name} usa {action.ActionName}.");
         EndTurn();
+    }
+
+    public void LogEvent(string message)
+    {
+        if (string.IsNullOrWhiteSpace(message))
+        {
+            return;
+        }
+
+        Log(message);
     }
 
     public void SubmitPlayerAction(ICombatAction action, IReadOnlyList<ICombatant> targets)
@@ -107,6 +152,11 @@ public class CombatManager : MonoBehaviour, IFleeHandler
         return GetAliveFrom(enemies);
     }
 
+    public IReadOnlyList<BaseCharacter> GetPlayerPartySnapshot()
+    {
+        return new List<BaseCharacter>(playerParty);
+    }
+
     public ICombatant GetRandomPlayer()
     {
         IReadOnlyList<ICombatant> alive = GetAlivePlayers();
@@ -124,6 +174,7 @@ public class CombatManager : MonoBehaviour, IFleeHandler
         bool isPlayer = players.Contains(user);
         IReadOnlyList<ICombatant> allies = isPlayer ? GetAlivePlayers() : GetAliveEnemies();
         IReadOnlyList<ICombatant> foes = isPlayer ? GetAliveEnemies() : GetAlivePlayers();
+        IReadOnlyList<ICombatant> downedAllies = isPlayer ? GetDownedFrom(players) : GetDownedFrom(enemies);
 
         switch (targetType)
         {
@@ -137,8 +188,40 @@ public class CombatManager : MonoBehaviour, IFleeHandler
                 return allies;
             case AbilityTargetType.Self:
                 return WrapSingle(user);
+            case AbilityTargetType.SingleDownedAlly:
+                return WrapSingle(PickRandom(downedAllies));
+            case AbilityTargetType.AllDownedAllies:
+                return downedAllies;
             default:
                 return WrapSingle(PickRandom(foes));
+        }
+    }
+
+    public IReadOnlyList<ICombatant> GetValidTargets(AbilityTargetType targetType, ICombatant user)
+    {
+        bool isPlayer = players.Contains(user);
+        IReadOnlyList<ICombatant> allies = isPlayer ? GetAlivePlayers() : GetAliveEnemies();
+        IReadOnlyList<ICombatant> foes = isPlayer ? GetAliveEnemies() : GetAlivePlayers();
+        IReadOnlyList<ICombatant> downedAllies = isPlayer ? GetDownedFrom(players) : GetDownedFrom(enemies);
+
+        switch (targetType)
+        {
+            case AbilityTargetType.SingleEnemy:
+                return foes;
+            case AbilityTargetType.AllEnemies:
+                return foes;
+            case AbilityTargetType.SingleAlly:
+                return allies;
+            case AbilityTargetType.AllAllies:
+                return allies;
+            case AbilityTargetType.Self:
+                return WrapSingle(user);
+            case AbilityTargetType.SingleDownedAlly:
+                return downedAllies;
+            case AbilityTargetType.AllDownedAllies:
+                return downedAllies;
+            default:
+                return foes;
         }
     }
 
@@ -184,6 +267,16 @@ public class CombatManager : MonoBehaviour, IFleeHandler
         }
 
         currentCombatant.TickStatusEffects();
+
+        // Si el combatiente está bloqueado (ej: parálisis), se omite su turno.
+        if (currentCombatant.IsActionBlocked)
+        {
+            Log($"{currentCombatant.Name} está paralizado y pierde su turno.");
+            TurnStarted?.Invoke(currentCombatant);
+            EndTurn();
+            return;
+        }
+
         awaitingPlayerAction = currentCombatant is PlayerCharacter;
         TurnStarted?.Invoke(currentCombatant);
         currentCombatant.ChooseAction(this);
@@ -245,6 +338,20 @@ public class CombatManager : MonoBehaviour, IFleeHandler
         return alive;
     }
 
+    private IReadOnlyList<ICombatant> GetDownedFrom(List<ICombatant> source)
+    {
+        List<ICombatant> downed = new List<ICombatant>();
+        foreach (ICombatant combatant in source)
+        {
+            if (combatant != null && !combatant.IsAlive)
+            {
+                downed.Add(combatant);
+            }
+        }
+
+        return downed;
+    }
+
     private ICombatant PickRandom(IReadOnlyList<ICombatant> combatants)
     {
         if (combatants == null || combatants.Count == 0)
@@ -270,5 +377,33 @@ public class CombatManager : MonoBehaviour, IFleeHandler
     {
         Debug.Log(message, this);
         CombatLog?.Invoke(message);
+    }
+
+    private void LogAction(ICombatant user, ICombatAction action, IReadOnlyList<ICombatant> targets)
+    {
+        if (user == null || action == null)
+        {
+            return;
+        }
+
+        if (targets != null && targets.Count > 0)
+        {
+            string targetNames = string.Join(", ", GetTargetNames(targets));
+            Log($"{user.Name} usa {action.ActionName} en {targetNames}.");
+            return;
+        }
+
+        Log($"{user.Name} usa {action.ActionName}.");
+    }
+
+    private IEnumerable<string> GetTargetNames(IReadOnlyList<ICombatant> targets)
+    {
+        foreach (ICombatant target in targets)
+        {
+            if (target != null)
+            {
+                yield return target.Name;
+            }
+        }
     }
 }
