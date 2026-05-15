@@ -63,7 +63,7 @@ public class PlayerData : MonoBehaviour
         if (character != null && !partyMembers.Contains(character))
         {
             partyMembers.Add(character);
-            ApplyStoredHealth(character);
+            TryApplyStoredHealth(character);
         }
     }
 
@@ -126,20 +126,21 @@ public class PlayerData : MonoBehaviour
         return true;
     }
 
-    private void ApplyStoredHealth(BaseCharacter character)
+    public bool TryApplyStoredHealth(BaseCharacter character)
     {
         if (character == null || character.Stats == null)
         {
-            return;
+            return false;
         }
 
         PartyMemberState state = FindState(character.Stats);
         if (state == null)
         {
-            return;
+            return false;
         }
 
         character.SetCurrentHealth(state.currentHealth, false);
+        return true;
     }
 
     private void SyncPartyStateFromMembers()

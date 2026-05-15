@@ -85,6 +85,10 @@ public class CombatSceneBootstrapper : MonoBehaviour
             {
                 instance.SetActionSelector(selector);
             }
+            if (PlayerData.Instance != null)
+            {
+                PlayerData.Instance.TryApplyStoredHealth(instance);
+            }
             WireTargetSelectable(instance);
             spawned.Add(instance);
         }
