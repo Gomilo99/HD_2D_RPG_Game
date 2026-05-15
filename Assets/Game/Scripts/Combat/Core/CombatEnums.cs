@@ -30,7 +30,9 @@ public enum AbilityTargetType
     AllAllies,
     Self,
     /// <summary>Selecciona aliados derrotados (vida 0).</summary>
-    SingleDownedAlly
+    SingleDownedAlly,
+    /// <summary>Selecciona todos los aliados derrotados (vida 0).</summary>
+    AllDownedAllies
 }
 
 public enum ItemEffectType

@@ -110,7 +110,7 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         }
 
         ICombatAction action = activePlayer.CreateAbility(ability);
-        if (ability.targetType == AbilityTargetType.AllAllies || ability.targetType == AbilityTargetType.AllEnemies || ability.targetType == AbilityTargetType.Self)
+        if (ability.targetType == AbilityTargetType.AllAllies || ability.targetType == AbilityTargetType.AllEnemies || ability.targetType == AbilityTargetType.Self || ability.targetType == AbilityTargetType.AllDownedAllies)
         {
             IReadOnlyList<ICombatant> targets = combatManager.GetTargetsFor(ability.targetType, activePlayer);
             SubmitAction(action, targets);

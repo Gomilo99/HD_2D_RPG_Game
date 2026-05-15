@@ -74,8 +74,20 @@ public class MathAbilityAction : ICombatAction, IMultiTargetCombatAction
                 CombatManager.Instance?.LogEvent($"{target.Name} queda paralizado ({ability.durationTurns} turnos).");
                 break;
             case AbilityEffectType.Revive:
-                target.Heal(ability.power);
-                CombatManager.Instance?.LogEvent($"{user.Name} revive a {target.Name} con {ability.power} de vida.");
+                int reviveAmount;
+                if (ability.reviveByPercent)
+                {
+                    float percent = Mathf.Clamp(ability.power, 1, 100) / 100f;
+                    reviveAmount = Mathf.Max(1, Mathf.CeilToInt(target.MaxHealth * percent));
+                    target.Heal(reviveAmount);
+                    CombatManager.Instance?.LogEvent($"{user.Name} revive a {target.Name} con {ability.power}% ({reviveAmount} vida).");
+                }
+                else
+                {
+                    reviveAmount = Mathf.Max(1, ability.power);
+                    target.Heal(reviveAmount);
+                    CombatManager.Instance?.LogEvent($"{user.Name} revive a {target.Name} con {reviveAmount} de vida.");
+                }
                 break;
         }
     }

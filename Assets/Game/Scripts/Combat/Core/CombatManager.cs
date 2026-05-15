@@ -190,6 +190,8 @@ public class CombatManager : MonoBehaviour, IFleeHandler
                 return WrapSingle(user);
             case AbilityTargetType.SingleDownedAlly:
                 return WrapSingle(PickRandom(downedAllies));
+            case AbilityTargetType.AllDownedAllies:
+                return downedAllies;
             default:
                 return WrapSingle(PickRandom(foes));
         }
@@ -215,6 +217,8 @@ public class CombatManager : MonoBehaviour, IFleeHandler
             case AbilityTargetType.Self:
                 return WrapSingle(user);
             case AbilityTargetType.SingleDownedAlly:
+                return downedAllies;
+            case AbilityTargetType.AllDownedAllies:
                 return downedAllies;
             default:
                 return foes;
