@@ -21,7 +21,6 @@ public class WorldHealthBar : MonoBehaviour
     {
         if (target != null)
         {
-            target.StatsChanged += HandleStatsChanged;
             target.HealthChanged += HandleHealthChanged;
         }
 
@@ -32,14 +31,8 @@ public class WorldHealthBar : MonoBehaviour
     {
         if (target != null)
         {
-            target.StatsChanged -= HandleStatsChanged;
             target.HealthChanged -= HandleHealthChanged;
         }
-    }
-
-    private void HandleStatsChanged(ICombatant combatant)
-    {
-        RefreshInstant();
     }
 
     private void HandleHealthChanged(ICombatant combatant, int previousHealth, int currentHealth)
@@ -74,12 +67,6 @@ public class WorldHealthBar : MonoBehaviour
             return;
         }
 
-        if (ratio >= damageFill.fillAmount)
-        {
-            damageFill.fillAmount = ratio;
-            return;
-        }
-
         if (damageRoutine != null)
         {
             StopCoroutine(damageRoutine);
@@ -92,7 +79,7 @@ public class WorldHealthBar : MonoBehaviour
     {
         yield return new WaitForSeconds(damageLagDelay);
 
-        while (damageFill != null && damageFill.fillAmount > targetFill)
+        while (damageFill != null && !Mathf.Approximately(damageFill.fillAmount, targetFill))
         {
             damageFill.fillAmount = Mathf.MoveTowards(damageFill.fillAmount, targetFill, damageLerpSpeed * Time.deltaTime);
             yield return null;
