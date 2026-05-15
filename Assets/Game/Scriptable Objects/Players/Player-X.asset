@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: Player-X
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
   characterName: X
-  maxCordura: 60
-  inteligencia: 8
-  memoria: 10
-  rapidez: 6
-  fealdad: 2
-  startingAbilities:
-  - {fileID: 11400000, guid: 7c30e2ec12dd3f9409aca3412d7f943e, type: 2}
-  - {fileID: 11400000, guid: 47e69c53b1eae5047b701cdbe536ce17, type: 2}
+  maxCordura: 20
+  inteligencia: 3
+  memoria: 5
+  rapidez: 1
+  fealdad: 3
+  startingAbilities: []

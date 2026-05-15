@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+[RequireComponent(typeof(TargetHighlight), typeof(BaseCharacter))]
 public class CombatTargetSelectable : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private BattleUIController battleUI;
@@ -8,6 +9,7 @@ public class CombatTargetSelectable : MonoBehaviour, IPointerClickHandler, IPoin
     [SerializeField] private TargetHighlight targetHighlight;
 
     private int lastSelectFrame = -1;
+    private bool isReady;
 
     public void SetBattleUI(BattleUIController ui)
     {
@@ -16,15 +18,9 @@ public class CombatTargetSelectable : MonoBehaviour, IPointerClickHandler, IPoin
 
     private void Awake()
     {
-        if (character == null)
-        {
-            character = GetComponent<BaseCharacter>();
-        }
+        character = GetComponent<BaseCharacter>();
+        targetHighlight = GetComponent<TargetHighlight>();
 
-        if (targetHighlight == null)
-        {
-            targetHighlight = GetComponentInChildren<TargetHighlight>();
-        }
     }
 
     private void Start()
@@ -33,6 +29,15 @@ public class CombatTargetSelectable : MonoBehaviour, IPointerClickHandler, IPoin
         {
             battleUI = FindFirstObjectByType<BattleUIController>();
         }
+
+        if (battleUI == null)
+        {
+            Debug.LogWarning("CombatTargetSelectable: BattleUIController no encontrado.", this);
+            enabled = false;
+            return;
+        }
+
+        isReady = true;
     }
 
     private void OnMouseDown()
@@ -47,7 +52,12 @@ public class CombatTargetSelectable : MonoBehaviour, IPointerClickHandler, IPoin
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if (targetHighlight != null && battleUI != null && battleUI.CanSelectTarget(character))
+        if (!isReady)
+        {
+            return;
+        }
+
+        if (battleUI.CanSelectTarget(character))
         {
             targetHighlight.SetHovered(true);
         }
@@ -55,15 +65,12 @@ public class CombatTargetSelectable : MonoBehaviour, IPointerClickHandler, IPoin
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (targetHighlight != null)
-        {
-            targetHighlight.SetHovered(false);
-        }
+        targetHighlight.SetHovered(false);
     }
 
     private void TrySelect()
     {
-        if (battleUI == null || character == null || !battleUI.CanSelectTarget(character))
+        if (!isReady || !battleUI.CanSelectTarget(character))
         {
             return;
         }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,4 +16,8 @@ public interface IInteractable
 
     /// <summary>Ejecuta la interacción cuando el jugador lo solicita.</summary>
     void Interact(GameObject interactor);
+
+    void UIInteractableON(GameObject interactor);
+
+    void UIInteractableOFF(GameObject interactor);
 }

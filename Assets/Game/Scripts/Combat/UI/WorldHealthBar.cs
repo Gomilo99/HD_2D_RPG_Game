@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(BaseCharacter))]
 public class WorldHealthBar : MonoBehaviour
 {
     [SerializeField] private BaseCharacter target;
@@ -11,28 +12,37 @@ public class WorldHealthBar : MonoBehaviour
     [SerializeField, Min(0.1f)] private float damageLerpSpeed = 4f;
 
     private Coroutine damageRoutine;
+    private bool isReady;
 
     private void Awake()
     {
-        TryResolveTarget();
+        isReady = ValidateReferences();
+        if (!isReady)
+        {
+            enabled = false;
+        }
     }
 
     private void OnEnable()
     {
-        if (target != null)
+        if (!isReady)
         {
-            target.HealthChanged += HandleHealthChanged;
+            return;
         }
+
+        target.HealthChanged += HandleHealthChanged;
 
         RefreshInstant();
     }
 
     private void OnDisable()
     {
-        if (target != null)
+        if (!isReady)
         {
-            target.HealthChanged -= HandleHealthChanged;
+            return;
         }
+
+        target.HealthChanged -= HandleHealthChanged;
     }
 
     private void HandleHealthChanged(ICombatant combatant, int previousHealth, int currentHealth)
@@ -43,29 +53,14 @@ public class WorldHealthBar : MonoBehaviour
     private void RefreshInstant()
     {
         float ratio = GetHealthRatio();
-        if (healthFill != null)
-        {
-            healthFill.fillAmount = ratio;
-        }
-
-        if (damageFill != null)
-        {
-            damageFill.fillAmount = ratio;
-        }
+        healthFill.fillAmount = ratio;
+        damageFill.fillAmount = ratio;
     }
 
     private void RefreshWithLag()
     {
         float ratio = GetHealthRatio();
-        if (healthFill != null)
-        {
-            healthFill.fillAmount = ratio;
-        }
-
-        if (damageFill == null)
-        {
-            return;
-        }
+        healthFill.fillAmount = ratio;
 
         if (damageRoutine != null)
         {
@@ -96,17 +91,25 @@ public class WorldHealthBar : MonoBehaviour
         return Mathf.Clamp01((float)target.CurrentHealth / target.MaxHealth);
     }
 
-    private void TryResolveTarget()
+    private bool ValidateReferences()
     {
-        if (target != null)
-        {
-            return;
-        }
-
-        target = GetComponentInParent<BaseCharacter>();
         if (target == null)
         {
-            target = GetComponentInChildren<BaseCharacter>();
+            Debug.LogWarning("WorldHealthBar: BaseCharacter no asignado.", this);
+            return false;
         }
+
+        if (healthFill == null)
+        {
+            Debug.LogWarning("WorldHealthBar: healthFill no asignado.", this);
+            return false;
+        }
+        if (damageFill == null)
+        {
+            Debug.LogWarning("WorldHealthBar: damageFill no asignado.", this);
+            return false;
+        }
+
+        return true;
     }
 }

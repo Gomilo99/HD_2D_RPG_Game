@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -23,6 +24,7 @@ public class SaveCheckpoint : MonoBehaviour, IInteractable, ICheckpointProvider
     [SerializeField] private string cityName = "Ciudad desconocida";
     [SerializeField] private GameObject playerReference;
     [SerializeField] private AudioSource saveSound;
+    [SerializeField] private GameObject interactablePanel;
 
     // ── IInteractable ─────────────────────────────────────────────────────────
 
@@ -50,6 +52,14 @@ public class SaveCheckpoint : MonoBehaviour, IInteractable, ICheckpointProvider
         {
             saveSound.Play();
         }
+    }
+    public void UIInteractableON(GameObject interactor)
+    {
+        interactablePanel.SetActive(true);
+    }
+    public void UIInteractableOFF(GameObject interactor)
+    {
+        interactablePanel.SetActive(false);
     }
 
     // ── ICheckpointProvider ───────────────────────────────────────────────────

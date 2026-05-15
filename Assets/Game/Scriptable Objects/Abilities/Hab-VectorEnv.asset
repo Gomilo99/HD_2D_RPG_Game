@@ -16,4 +16,5 @@ MonoBehaviour:
   effectType: 5
   targetType: 0
   power: 5
-  durationTurns: 1
+  reviveByPercent: 0
+  durationTurns: 3

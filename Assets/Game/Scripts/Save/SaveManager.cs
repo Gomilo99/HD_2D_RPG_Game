@@ -99,7 +99,18 @@ public class SaveManager : MonoBehaviour
             return false;
         }
     }
-
+    public void LoadSlot1()
+    {
+        Load(1);
+    }
+    public void LoadSlot2()
+    {
+        Load(2);
+    }
+    public void LoadSlot3()
+    {
+        Load(3);
+    }
     /// <summary>
     /// Carga la partida del slot indicado y aplica los datos al estado del juego.
     /// Retorna true si la carga fue exitosa.

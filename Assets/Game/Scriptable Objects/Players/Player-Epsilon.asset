@@ -13,11 +13,9 @@ MonoBehaviour:
   m_Name: Player-Epsilon
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
   characterName: Epsilon
-  maxCordura: 100
-  inteligencia: 10
-  memoria: 5
-  rapidez: 5
+  maxCordura: 15
+  inteligencia: 4
+  memoria: 4
+  rapidez: 4
   fealdad: 2
-  startingAbilities:
-  - {fileID: 11400000, guid: 741af0b8332768a4ab21b3c76648328f, type: 2}
-  - {fileID: 11400000, guid: be39a3a7deff0ed49be8ea9751e48b9c, type: 2}
+  startingAbilities: []

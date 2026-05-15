@@ -17,3 +17,4 @@ MonoBehaviour:
     proporciona un aumento en la memoria para de forma m\xE1gica."
   effectType: 1
   power: 10
+  value: 10

@@ -13,12 +13,10 @@ MonoBehaviour:
   m_Name: Player-Phi
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
   characterName: Phi
-  maxCordura: 100
-  inteligencia: 10
-  memoria: 5
+  maxCordura: 10
+  inteligencia: 5
+  memoria: 3
   rapidez: 5
   fealdad: 1
   startingAbilities:
-  - {fileID: 11400000, guid: d56e40d541a2eb34e8bb522be6238bdb, type: 2}
-  - {fileID: 11400000, guid: 4f3de6944544a4d44a8fe84968588720, type: 2}
-  - {fileID: 11400000, guid: 182a296ac45573e4bb29c5bd1fc35d85, type: 2}
+  - {fileID: 11400000, guid: 6b5fb3e1b531deb48bedeaa869cdbb99, type: 2}

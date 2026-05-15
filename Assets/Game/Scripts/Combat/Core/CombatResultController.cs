@@ -42,35 +42,87 @@ public class CombatResultController : MonoBehaviour
     [Header("Pausa antes de mostrar resultado (segundos)")]
     [SerializeField, Min(0f)] private float resultDelay = 1.2f;
 
+    private bool isReady;
+
     private void Awake()
     {
+        CacheReferences();
+        isReady = ValidateReferences();
+        if (!isReady)
+        {
+            enabled = false;
+            return;
+        }
+
         OcultarPaneles();
+    }
+
+    private void CacheReferences()
+    {
+        if (combatManager == null)
+        {
+            combatManager = FindFirstObjectByType<CombatManager>();
+        }
+
+        if (battleUIController == null)
+        {
+            battleUIController = FindFirstObjectByType<BattleUIController>();
+        }
 
         if (sceneTransitionManager == null)
         {
             sceneTransitionManager = SceneTransitionManager.Instance;
         }
+    }
+
+    private bool ValidateReferences()
+    {
+        bool ok = true;
+
+        if (combatManager == null)
+        {
+            Debug.LogWarning("CombatResultController: CombatManager no asignado.", this);
+            ok = false;
+        }
+
+        if (battleUIController == null)
+        {
+            Debug.LogWarning("CombatResultController: BattleUIController no asignado.", this);
+            ok = false;
+        }
+
+        if (sceneTransitionManager == null)
+        {
+            Debug.LogWarning("CombatResultController: SceneTransitionManager no encontrado.", this);
+            ok = false;
+        }
+
+        if (victoryPanel == null)
+        {
+            Debug.LogWarning("CombatResultController: victoryPanel no está asignado.", this);
+        }
+
+        if (defeatPanel == null)
+        {
+            Debug.LogWarning("CombatResultController: defeatPanel no está asignado.", this);
+        }
+
+        return ok;
     }
 
     private void OnEnable()
     {
-        if (sceneTransitionManager == null)
+        if (!isReady)
         {
-            sceneTransitionManager = SceneTransitionManager.Instance;
+            return;
         }
 
-        if (combatManager != null)
-        {
-            combatManager.CombatEnded += OnCombatEnded;
-        }
+        combatManager.CombatEnded += OnCombatEnded;
     }
 
     private void OnDisable()
     {
-        if (combatManager != null)
-        {
-            combatManager.CombatEnded -= OnCombatEnded;
-        }
+        combatManager.CombatEnded -= OnCombatEnded;
     }
 
     // ── Eventos de botones ────────────────────────────────────────────────────
@@ -78,28 +130,19 @@ public class CombatResultController : MonoBehaviour
     /// <summary>Botón "Continuar" en la pantalla de victoria.</summary>
     public void OnContinuePressed()
     {
-        if (sceneTransitionManager != null)
-        {
-            sceneTransitionManager.ReturnToWorld();
-        }
+        sceneTransitionManager.ReturnToWorld();
     }
 
     /// <summary>Botón "Reintentar" en la pantalla de derrota.</summary>
     public void OnRetryPressed()
     {
-        if (sceneTransitionManager != null)
-        {
-            sceneTransitionManager.RetryCombat();
-        }
+        sceneTransitionManager.RetryCombat();
     }
 
     /// <summary>Botón "Menú principal" en la pantalla de derrota.</summary>
     public void OnMainMenuPressed()
     {
-        if (sceneTransitionManager != null)
-        {
-            sceneTransitionManager.GoToMainMenu();
-        }
+        sceneTransitionManager.GoToMainMenu();
     }
 
     // ── Lógica interna ────────────────────────────────────────────────────────
@@ -107,7 +150,7 @@ public class CombatResultController : MonoBehaviour
     private void OnCombatEnded(CombatResult result)
     {
         battleUIController.HideOverlay();
-        if (PlayerData.Instance != null && combatManager != null)
+        if (PlayerData.Instance != null)
         {
             PlayerData.Instance.UpdatePartyState(combatManager.GetPlayerPartySnapshot());
         }
@@ -128,46 +171,24 @@ public class CombatResultController : MonoBehaviour
                 break;
             case CombatResult.Fled:
                 // Al huir, se regresa directamente al mundo sin pantalla de resultado.
-                if (sceneTransitionManager != null)
-                {
-                    sceneTransitionManager.ReturnToWorld();
-                }
+                sceneTransitionManager.ReturnToWorld();
                 break;
         }
     }
 
     private void ShowVictory()
     {
-        if (victoryPanel == null)
-        {
-            Debug.LogWarning("CombatResultController: victoryPanel no está asignado.", this);
-            return;
-        }
-
         victoryPanel.SetActive(true);
     }
 
     private void ShowDefeat()
     {
-        if (defeatPanel == null)
-        {
-            Debug.LogWarning("CombatResultController: defeatPanel no está asignado.", this);
-            return;
-        }
-
         defeatPanel.SetActive(true);
     }
 
     private void OcultarPaneles()
     {
-        if (victoryPanel != null)
-        {
-            victoryPanel.SetActive(false);
-        }
-
-        if (defeatPanel != null)
-        {
-            defeatPanel.SetActive(false);
-        }
+        victoryPanel.SetActive(false);
+        defeatPanel.SetActive(false);
     }
 }

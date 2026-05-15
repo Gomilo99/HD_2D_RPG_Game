@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Detector de interacción del jugador con objetos IInteractable del mundo
@@ -31,7 +32,6 @@ public class PlayerInteractionDetector : MonoBehaviour
     private void Update()
     {
         ActualizarObjetivoMasCercano();
-        ProcesarInput();
     }
 
     // ── Privados ──────────────────────────────────────────────────────────────
@@ -59,9 +59,10 @@ public class PlayerInteractionDetector : MonoBehaviour
         }
 
         currentTarget = closest;
+        currentTarget.UIInteractableON(gameObject);
     }
 
-    private void ProcesarInput()
+    public  void OnInteract(InputAction.CallbackContext context)
     {
         if (currentTarget == null)
         {
@@ -69,10 +70,8 @@ public class PlayerInteractionDetector : MonoBehaviour
         }
 
         // Acepta tanto el Input Manager clásico como el Input System vía polling.
-        if (Input.GetButtonDown("Interact"))
-        {
-            currentTarget.Interact(gameObject);
-        }
+        currentTarget.Interact(gameObject);
+        currentTarget.UIInteractableOFF(gameObject);
     }
 
     private void OnDrawGizmosSelected()

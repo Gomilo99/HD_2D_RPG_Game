@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Unity.VisualStudio.Editor;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -34,6 +36,7 @@ public class InteractableChest : MonoBehaviour, IInteractable
     [Header("Visual")]
     [SerializeField] private Animator chestAnimator;
     [SerializeField] private string openAnimationTrigger = "Open";
+    [SerializeField] private GameObject interactablePanel;
 
     private bool opened = false;
 
@@ -56,6 +59,14 @@ public class InteractableChest : MonoBehaviour, IInteractable
         EntregarContenido();
         ReproducirAnimacion();
         ChestOpened?.Invoke(this);
+    }
+    public void UIInteractableON(GameObject interactor)
+    {
+        interactablePanel.SetActive(true);
+    }
+    public void UIInteractableOFF(GameObject interactor)
+    {
+        interactablePanel.SetActive(false);
     }
 
     // ── Privados ──────────────────────────────────────────────────────────────
@@ -86,7 +97,7 @@ public class InteractableChest : MonoBehaviour, IInteractable
     {
         if (chestAnimator != null && !string.IsNullOrEmpty(openAnimationTrigger))
         {
-            chestAnimator.SetTrigger(openAnimationTrigger);
+            chestAnimator.SetBool(openAnimationTrigger, true);
         }
     }
 }

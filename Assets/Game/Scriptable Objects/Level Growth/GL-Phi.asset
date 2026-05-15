@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44c375d1849b2584a8b6da22a7731e27, type: 3}
+  m_Name: GL-Phi
+  m_EditorClassIdentifier: Assembly-CSharp::LevelGrowthTable
+  entries:
+  - level: 1
+    experienceRequired: 10
+    corduraGain: 3
+    inteligenciaGain: 2
+    memoriaGain: 0
+    rapidezGain: 1
+    fealdadGain: 1
+    abilitiesUnlocked:
+    - {fileID: 11400000, guid: 182a296ac45573e4bb29c5bd1fc35d85, type: 2}
+  - level: 1
+    experienceRequired: 20
+    corduraGain: 1
+    inteligenciaGain: 2
+    memoriaGain: 2
+    rapidezGain: 1
+    fealdadGain: 1
+    abilitiesUnlocked:
+    - {fileID: 11400000, guid: 741af0b8332768a4ab21b3c76648328f, type: 2}

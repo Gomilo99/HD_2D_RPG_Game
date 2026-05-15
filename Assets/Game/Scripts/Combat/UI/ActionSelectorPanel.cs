@@ -4,6 +4,8 @@ public class ActionSelectorPanel : MonoBehaviour, IActionSelector
 {
     [SerializeField] private BattleUIController battleUI;
 
+    private bool isReady;
+
     private void Awake()
     {
         if (battleUI == null)
@@ -15,6 +17,15 @@ public class ActionSelectorPanel : MonoBehaviour, IActionSelector
         {
             battleUI = FindFirstObjectByType<BattleUIController>();
         }
+
+        if (battleUI == null)
+        {
+            Debug.LogWarning("ActionSelectorPanel: BattleUIController no existe.", this);
+            enabled = false;
+            return;
+        }
+
+        isReady = true;
     }
 
     public void SetBattleUI(BattleUIController ui)
@@ -24,9 +35,8 @@ public class ActionSelectorPanel : MonoBehaviour, IActionSelector
 
     public void RequestAction(PlayerCharacter player, CombatManager combatManager)
     {
-        if (battleUI == null)
+        if (!isReady)
         {
-            Debug.LogWarning("ActionSelectorPanel: BattleUIController no asignado.", this);
             return;
         }
 

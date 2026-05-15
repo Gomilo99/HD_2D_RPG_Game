@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Enemy-Newton
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
   characterName: Newton
-  maxCordura: 120
-  inteligencia: 15
-  memoria: 10
-  rapidez: 4
-  fealdad: 0
+  maxCordura: 20
+  inteligencia: 1
+  memoria: 1
+  rapidez: 1
+  fealdad: 1
   startingAbilities:
   - {fileID: 11400000, guid: 7c30e2ec12dd3f9409aca3412d7f943e, type: 2}
   - {fileID: 11400000, guid: 741af0b8332768a4ab21b3c76648328f, type: 2}

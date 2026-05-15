@@ -205,6 +205,7 @@ GameObject:
   - component: {fileID: 9153781046780188426}
   - component: {fileID: 4496701010733112619}
   - component: {fileID: 9054116127933482595}
+  - component: {fileID: -7590318490729272407}
   - component: {fileID: 5553879812153806479}
   - component: {fileID: 4089081237891363730}
   - component: {fileID: 4805334173566519737}
@@ -310,6 +311,21 @@ MonoBehaviour:
     speedModifier: 0
     luckModifier: 0
   actionSelectorComponent: {fileID: 0}
+--- !u!114 &-7590318490729272407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2643149672014573601}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 45a337d045793a045984906e3b85f184, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CharacterLevel
+  growthTable: {fileID: 0}
+  currentLevel: 1
+  totalExperience: 0
 --- !u!114 &5553879812153806479
 MonoBehaviour:
   m_ObjectHideFlags: 0

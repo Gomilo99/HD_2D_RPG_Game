@@ -39,6 +39,8 @@ public class ShopNPC : MonoBehaviour, IInteractable
     [Header("Nombre del NPC")]
     [SerializeField] private string npcName = "Vendedor";
 
+    [SerializeField] private GameObject interactablePanel;
+
     /// <summary>Se dispara cuando se completa una compra. Parámetro: ítem comprado.</summary>
     public System.Action<ItemData> ItemPurchased;
 
@@ -49,10 +51,28 @@ public class ShopNPC : MonoBehaviour, IInteractable
 
     public string InteractPrompt => $"Hablar con {npcName}";
     public bool CanInteract => true;
-
+    private bool isOpened = false;
     public void Interact(GameObject interactor)
     {
-        AbrirTienda();
+        if (!isOpened)
+        {
+            AbrirTienda();
+            isOpened = true;
+        }
+        else
+        {
+            CerrarTienda();
+            isOpened = false;
+        }
+        
+    }
+        public void UIInteractableON(GameObject interactor)
+    {
+        interactablePanel.SetActive(true);
+    }
+    public void UIInteractableOFF(GameObject interactor)
+    {
+        interactablePanel.SetActive(false);
     }
 
     // ── API pública (llamada desde la UI de tienda) ────────────────────────────

@@ -18,32 +18,28 @@ public class CombatSceneBootstrapper : MonoBehaviour
     [SerializeField] private List<CharacterStats> fallbackPlayerStats = new List<CharacterStats>();
     [SerializeField] private List<EnemyCharacter> fallbackEnemyPrefabs = new List<EnemyCharacter>();
 
+    private bool isReady;
+
+    private void Awake()
+    {
+        CacheReferences();
+        isReady = ValidateReferences();
+        if (!isReady)
+        {
+            enabled = false;
+        }
+    }
+
     private void Start()
     {
-        if (combatManager == null)
+        if (!isReady)
         {
-            Debug.LogWarning("CombatSceneBootstrapper: CombatManager no asignado.", this);
             return;
-        }
-
-        if (battleUI == null)
-        {
-            battleUI = FindFirstObjectByType<BattleUIController>();
-        }
-
-        if (actionSelectorPanel == null && battleUI != null)
-        {
-            actionSelectorPanel = battleUI.GetComponentInChildren<ActionSelectorPanel>(true);
         }
 
         if (actionSelectorPanel != null && battleUI != null)
         {
             actionSelectorPanel.SetBattleUI(battleUI);
-        }
-
-        if (battleUI == null)
-        {
-            Debug.LogWarning("CombatSceneBootstrapper: BattleUIController no encontrado. Los jugadores actuaran en automatico.", this);
         }
 
         List<BaseCharacter> playerInstances = SpawnPlayers();
@@ -55,6 +51,59 @@ public class CombatSceneBootstrapper : MonoBehaviour
         combatManager.StartCombat();
 
         CombatContext.Clear();
+    }
+
+    private void CacheReferences()
+    {
+        if (battleUI == null)
+        {
+            battleUI = FindFirstObjectByType<BattleUIController>();
+        }
+
+        if (actionSelectorPanel == null && battleUI != null)
+        {
+            actionSelectorPanel = FindFirstObjectByType<ActionSelectorPanel>();
+        }
+    }
+
+    private bool ValidateReferences()
+    {
+        bool ok = true;
+
+        if (combatManager == null)
+        {
+            Debug.LogWarning("CombatSceneBootstrapper: CombatManager no asignado.", this);
+            ok = false;
+        }
+        if (actionSelectorPanel == null)
+        {
+            Debug.LogWarning("CombatSceneBootstrapper: Action Selector Panel no encontrado");
+            ok = false;
+        }
+        if(battleUI == null)
+        {
+            Debug.LogWarning("CombatSceneBootstrapper: Battle UI no encontrado");
+            ok = false;
+        }
+
+        if (playerPrefab == null)
+        {
+            Debug.LogWarning("CombatSceneBootstrapper: Player prefab no asignado.", this);
+            ok = false;
+        }
+
+        if (playerSpawnPoints == null || playerSpawnPoints.Length == 0)
+        {
+            Debug.LogWarning("CombatSceneBootstrapper: playerSpawnPoints vacios.", this);
+            ok = false;
+        }
+
+        if (enemySpawnPoints == null || enemySpawnPoints.Length == 0)
+        {
+            Debug.LogWarning("CombatSceneBootstrapper: enemySpawnPoints vacios.", this);
+        }
+
+        return ok;
     }
 
     private List<BaseCharacter> SpawnPlayers()

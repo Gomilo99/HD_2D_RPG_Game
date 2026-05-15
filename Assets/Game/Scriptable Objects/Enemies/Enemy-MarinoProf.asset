@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Enemy-MarinoProf
   m_EditorClassIdentifier: Assembly-CSharp::CharacterStats
   characterName: Profesor Marino
-  maxCordura: 50
-  inteligencia: 12
-  memoria: 2
-  rapidez: 4
-  fealdad: 0
+  maxCordura: 10
+  inteligencia: 5
+  memoria: 5
+  rapidez: 5
+  fealdad: 1
   startingAbilities:
   - {fileID: 11400000, guid: 6b5fb3e1b531deb48bedeaa869cdbb99, type: 2}
   - {fileID: 11400000, guid: 47e69c53b1eae5047b701cdbe536ce17, type: 2}

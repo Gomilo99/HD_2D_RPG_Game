@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Loot1
   m_EditorClassIdentifier: Assembly-CSharp::LootTable
   entries:
-  - item: {fileID: 11400000, guid: 8878e0de839f7154ca29771ebd5d8147, type: 2}
-    dropChance: 0.6
+  - item: {fileID: 11400000, guid: a5062ab9836790b4db9b560134bbddb6, type: 2}
+    dropChance: 0.5
     minQuantity: 1
-    maxQuantity: 2
-    moneyDrop: 50
-  experienceReward: 10
+    maxQuantity: 1
+    moneyDrop: 10
+  experienceReward: 5
