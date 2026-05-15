@@ -14,10 +14,7 @@ public class WorldHealthBar : MonoBehaviour
 
     private void Awake()
     {
-        if (target == null)
-        {
-            target = GetComponentInParent<BaseCharacter>();
-        }
+        TryResolveTarget();
     }
 
     private void OnEnable()
@@ -25,6 +22,7 @@ public class WorldHealthBar : MonoBehaviour
         if (target != null)
         {
             target.StatsChanged += HandleStatsChanged;
+            target.HealthChanged += HandleHealthChanged;
         }
 
         RefreshInstant();
@@ -35,10 +33,16 @@ public class WorldHealthBar : MonoBehaviour
         if (target != null)
         {
             target.StatsChanged -= HandleStatsChanged;
+            target.HealthChanged -= HandleHealthChanged;
         }
     }
 
     private void HandleStatsChanged(ICombatant combatant)
+    {
+        RefreshInstant();
+    }
+
+    private void HandleHealthChanged(ICombatant combatant, int previousHealth, int currentHealth)
     {
         RefreshWithLag();
     }
@@ -103,5 +107,19 @@ public class WorldHealthBar : MonoBehaviour
         }
 
         return Mathf.Clamp01((float)target.CurrentHealth / target.MaxHealth);
+    }
+
+    private void TryResolveTarget()
+    {
+        if (target != null)
+        {
+            return;
+        }
+
+        target = GetComponentInParent<BaseCharacter>();
+        if (target == null)
+        {
+            target = GetComponentInChildren<BaseCharacter>();
+        }
     }
 }

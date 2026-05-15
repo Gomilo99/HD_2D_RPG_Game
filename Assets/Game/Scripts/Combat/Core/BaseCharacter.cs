@@ -11,6 +11,7 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
     private readonly List<IStatusEffect> statusEffects = new List<IStatusEffect>();
 
     public event Action<ICombatant> StatsChanged;
+    public event Action<ICombatant, int, int> HealthChanged;
     public event Action<ICombatant> Defeated;
 
     public string Name => stats != null && !string.IsNullOrWhiteSpace(stats.characterName)
@@ -74,7 +75,13 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
             return;
         }
 
+        int previousHealth = runtimeStats.CurrentHealth;
         runtimeStats.ApplyDamage(amount);
+        int currentHealth = runtimeStats.CurrentHealth;
+        if (currentHealth != previousHealth)
+        {
+            HealthChanged?.Invoke(this, previousHealth, currentHealth);
+        }
         StatsChanged?.Invoke(this);
 
         if (!IsAlive)
@@ -90,7 +97,13 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
             return;
         }
 
+        int previousHealth = runtimeStats.CurrentHealth;
         runtimeStats.Heal(amount);
+        int currentHealth = runtimeStats.CurrentHealth;
+        if (currentHealth != previousHealth)
+        {
+            HealthChanged?.Invoke(this, previousHealth, currentHealth);
+        }
         StatsChanged?.Invoke(this);
     }
 
