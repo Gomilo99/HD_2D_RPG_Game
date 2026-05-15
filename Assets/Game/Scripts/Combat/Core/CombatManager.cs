@@ -152,6 +152,11 @@ public class CombatManager : MonoBehaviour, IFleeHandler
         return GetAliveFrom(enemies);
     }
 
+    public IReadOnlyList<BaseCharacter> GetPlayerPartySnapshot()
+    {
+        return new List<BaseCharacter>(playerParty);
+    }
+
     public ICombatant GetRandomPlayer()
     {
         IReadOnlyList<ICombatant> alive = GetAlivePlayers();
@@ -169,6 +174,7 @@ public class CombatManager : MonoBehaviour, IFleeHandler
         bool isPlayer = players.Contains(user);
         IReadOnlyList<ICombatant> allies = isPlayer ? GetAlivePlayers() : GetAliveEnemies();
         IReadOnlyList<ICombatant> foes = isPlayer ? GetAliveEnemies() : GetAlivePlayers();
+        IReadOnlyList<ICombatant> downedAllies = isPlayer ? GetDownedFrom(players) : GetDownedFrom(enemies);
 
         switch (targetType)
         {
@@ -182,6 +188,8 @@ public class CombatManager : MonoBehaviour, IFleeHandler
                 return allies;
             case AbilityTargetType.Self:
                 return WrapSingle(user);
+            case AbilityTargetType.SingleDownedAlly:
+                return WrapSingle(PickRandom(downedAllies));
             default:
                 return WrapSingle(PickRandom(foes));
         }
@@ -192,6 +200,7 @@ public class CombatManager : MonoBehaviour, IFleeHandler
         bool isPlayer = players.Contains(user);
         IReadOnlyList<ICombatant> allies = isPlayer ? GetAlivePlayers() : GetAliveEnemies();
         IReadOnlyList<ICombatant> foes = isPlayer ? GetAliveEnemies() : GetAlivePlayers();
+        IReadOnlyList<ICombatant> downedAllies = isPlayer ? GetDownedFrom(players) : GetDownedFrom(enemies);
 
         switch (targetType)
         {
@@ -205,6 +214,8 @@ public class CombatManager : MonoBehaviour, IFleeHandler
                 return allies;
             case AbilityTargetType.Self:
                 return WrapSingle(user);
+            case AbilityTargetType.SingleDownedAlly:
+                return downedAllies;
             default:
                 return foes;
         }
@@ -321,6 +332,20 @@ public class CombatManager : MonoBehaviour, IFleeHandler
         }
 
         return alive;
+    }
+
+    private IReadOnlyList<ICombatant> GetDownedFrom(List<ICombatant> source)
+    {
+        List<ICombatant> downed = new List<ICombatant>();
+        foreach (ICombatant combatant in source)
+        {
+            if (combatant != null && !combatant.IsAlive)
+            {
+                downed.Add(combatant);
+            }
+        }
+
+        return downed;
     }
 
     private ICombatant PickRandom(IReadOnlyList<ICombatant> combatants)

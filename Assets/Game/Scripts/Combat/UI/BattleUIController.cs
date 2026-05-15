@@ -134,7 +134,10 @@ public class BattleUIController : MonoBehaviour, IActionSelector
         }
 
         pendingAction = activePlayer.CreateUseItem(item);
-        ShowTargetSelection(AbilityTargetType.SingleAlly);
+        AbilityTargetType targetType = item.effectType == ItemEffectType.Revive
+            ? AbilityTargetType.SingleDownedAlly
+            : AbilityTargetType.SingleAlly;
+        ShowTargetSelection(targetType);
     }
 
     public void OnOpenAbilityMenu()

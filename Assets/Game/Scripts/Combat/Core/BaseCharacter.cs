@@ -118,6 +118,20 @@ public abstract class BaseCharacter : MonoBehaviour, ICombatant
         StatsChanged?.Invoke(this);
     }
 
+    public void SetCurrentHealth(int value, bool notify = true)
+    {
+        if (runtimeStats == null)
+        {
+            return;
+        }
+
+        runtimeStats.SetCurrentHealth(value);
+        if (notify)
+        {
+            StatsChanged?.Invoke(this);
+        }
+    }
+
     public void ApplyStatusEffect(IStatusEffect effect)
     {
         if (effect == null)

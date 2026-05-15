@@ -73,6 +73,10 @@ public class MathAbilityAction : ICombatAction, IMultiTargetCombatAction
                 target.ApplyStatusEffect(new ParalysisStatusEffect(ability.abilityName, ability.durationTurns));
                 CombatManager.Instance?.LogEvent($"{target.Name} queda paralizado ({ability.durationTurns} turnos).");
                 break;
+            case AbilityEffectType.Revive:
+                target.Heal(ability.power);
+                CombatManager.Instance?.LogEvent($"{user.Name} revive a {target.Name} con {ability.power} de vida.");
+                break;
         }
     }
 }

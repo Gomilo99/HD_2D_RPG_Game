@@ -107,6 +107,10 @@ public class CombatResultController : MonoBehaviour
     private void OnCombatEnded(CombatResult result)
     {
         battleUIController.HideOverlay();
+        if (PlayerData.Instance != null && combatManager != null)
+        {
+            PlayerData.Instance.UpdatePartyState(combatManager.GetPlayerPartySnapshot());
+        }
         StartCoroutine(MostrarResultadoConPausa(result));
     }
 

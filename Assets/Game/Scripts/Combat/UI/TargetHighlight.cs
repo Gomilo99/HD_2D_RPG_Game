@@ -6,7 +6,7 @@ public class TargetHighlight : MonoBehaviour
     [SerializeField] private Color highlightColor = new Color(1f, 0.9f, 0.5f, 1f);
     [SerializeField] private Color hoverColor = new Color(1f, 0.7f, 0.2f, 1f);
 
-    private Color originalColor = Color.white;
+    private Color baseColor = Color.white;
     private bool isHighlighted;
     private bool isHovered;
 
@@ -19,8 +19,14 @@ public class TargetHighlight : MonoBehaviour
 
         if (spriteRenderer != null)
         {
-            originalColor = spriteRenderer.color;
+            baseColor = spriteRenderer.color;
         }
+    }
+
+    public void SetBaseColor(Color color)
+    {
+        baseColor = color;
+        ApplyColor();
     }
 
     public void SetHighlighted(bool highlighted)
@@ -58,6 +64,6 @@ public class TargetHighlight : MonoBehaviour
             return;
         }
 
-        spriteRenderer.color = isHighlighted ? highlightColor : originalColor;
+        spriteRenderer.color = isHighlighted ? highlightColor : baseColor;
     }
 }

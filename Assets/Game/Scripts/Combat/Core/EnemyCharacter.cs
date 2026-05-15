@@ -7,6 +7,7 @@ public class EnemyCharacter : BaseCharacter
 
     [Header("Progresión")]
     [SerializeField] private LootTable lootTable;
+    [SerializeField] private bool destroyOnDefeat = true;
 
     private IAIController aiController;
 
@@ -56,37 +57,33 @@ public class EnemyCharacter : BaseCharacter
     /// </summary>
     private void OnDefeated(ICombatant combatant)
     {
-        if (lootTable == null)
+        if (lootTable != null)
         {
-            return;
+            lootTable.Evaluate();
         }
 
-        lootTable.Evaluate();
-
-        // Distribuye la experiencia entre los miembros vivos del equipo.
-        if (PlayerData.Instance == null)
+        int exp = lootTable != null ? lootTable.ExperienceReward : 0;
+        if (exp > 0 && PlayerData.Instance != null)
         {
-            return;
-        }
-
-        int exp = lootTable.ExperienceReward;
-        if (exp <= 0)
-        {
-            return;
-        }
-
-        foreach (BaseCharacter member in PlayerData.Instance.PartyMembers)
-        {
-            if (member == null || !member.IsAlive)
+            // Distribuye la experiencia entre los miembros vivos del equipo.
+            foreach (BaseCharacter member in PlayerData.Instance.PartyMembers)
             {
-                continue;
-            }
+                if (member == null || !member.IsAlive)
+                {
+                    continue;
+                }
 
-            CharacterLevel levelComp = member.GetComponent<CharacterLevel>();
-            if (levelComp != null)
-            {
-                levelComp.GainExperience(exp);
+                CharacterLevel levelComp = member.GetComponent<CharacterLevel>();
+                if (levelComp != null)
+                {
+                    levelComp.GainExperience(exp);
+                }
             }
+        }
+
+        if (destroyOnDefeat)
+        {
+            Destroy(gameObject);
         }
     }
 }

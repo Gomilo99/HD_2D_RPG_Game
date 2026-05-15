@@ -20,8 +20,16 @@ public class PlayerData : MonoBehaviour
 {
     public static PlayerData Instance { get; private set; }
 
+    [Serializable]
+    private class PartyMemberState
+    {
+        public CharacterStats stats;
+        public int currentHealth = 1;
+    }
+
     [SerializeField, Min(0)] private int money = 0;
     [SerializeField] private List<BaseCharacter> partyMembers = new List<BaseCharacter>();
+    [SerializeField] private List<PartyMemberState> partyState = new List<PartyMemberState>();
 
     /// <summary>Dinero actual del jugador.</summary>
     public int Money => money;
@@ -44,12 +52,18 @@ public class PlayerData : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
+    private void OnValidate()
+    {
+        SyncPartyStateFromMembers();
+    }
+
     /// <summary>Registra un personaje en el equipo del jugador.</summary>
     public void RegisterPartyMember(BaseCharacter character)
     {
         if (character != null && !partyMembers.Contains(character))
         {
             partyMembers.Add(character);
+            ApplyStoredHealth(character);
         }
     }
 
@@ -57,6 +71,32 @@ public class PlayerData : MonoBehaviour
     public void RemovePartyMember(BaseCharacter character)
     {
         partyMembers.Remove(character);
+    }
+
+    public void UpdatePartyState(IEnumerable<BaseCharacter> members)
+    {
+        if (members == null)
+        {
+            return;
+        }
+
+        foreach (BaseCharacter member in members)
+        {
+            if (member == null || member.Stats == null)
+            {
+                continue;
+            }
+
+            int health = Mathf.Max(1, member.CurrentHealth);
+            PartyMemberState state = FindState(member.Stats);
+            if (state == null)
+            {
+                state = new PartyMemberState { stats = member.Stats };
+                partyState.Add(state);
+            }
+
+            state.currentHealth = health;
+        }
     }
 
     /// <summary>Añade dinero al saldo. Ignora valores negativos.</summary>
@@ -84,5 +124,94 @@ public class PlayerData : MonoBehaviour
         money -= amount;
         MoneyChanged?.Invoke(money);
         return true;
+    }
+
+    private void ApplyStoredHealth(BaseCharacter character)
+    {
+        if (character == null || character.Stats == null)
+        {
+            return;
+        }
+
+        PartyMemberState state = FindState(character.Stats);
+        if (state == null)
+        {
+            return;
+        }
+
+        character.SetCurrentHealth(state.currentHealth, false);
+    }
+
+    private void SyncPartyStateFromMembers()
+    {
+        if (partyMembers == null)
+        {
+            return;
+        }
+
+        if (partyState == null)
+        {
+            partyState = new List<PartyMemberState>();
+        }
+
+        List<CharacterStats> memberStats = new List<CharacterStats>();
+        foreach (BaseCharacter member in partyMembers)
+        {
+            if (member == null || member.Stats == null)
+            {
+                continue;
+            }
+
+            if (!memberStats.Contains(member.Stats))
+            {
+                memberStats.Add(member.Stats);
+            }
+        }
+
+        for (int i = partyState.Count - 1; i >= 0; i--)
+        {
+            PartyMemberState state = partyState[i];
+            if (state == null || state.stats == null || !memberStats.Contains(state.stats))
+            {
+                partyState.RemoveAt(i);
+            }
+        }
+
+        foreach (CharacterStats stats in memberStats)
+        {
+            PartyMemberState state = FindState(stats);
+            if (state == null)
+            {
+                state = new PartyMemberState
+                {
+                    stats = stats,
+                    currentHealth = stats != null ? Mathf.Max(1, stats.maxCordura) : 1
+                };
+                partyState.Add(state);
+            }
+        }
+
+        foreach (PartyMemberState state in partyState)
+        {
+            if (state == null || state.stats == null)
+            {
+                continue;
+            }
+
+            state.currentHealth = Mathf.Clamp(state.currentHealth, 1, state.stats.maxCordura);
+        }
+    }
+
+    private PartyMemberState FindState(CharacterStats stats)
+    {
+        foreach (PartyMemberState state in partyState)
+        {
+            if (state != null && state.stats == stats)
+            {
+                return state;
+            }
+        }
+
+        return null;
     }
 }
