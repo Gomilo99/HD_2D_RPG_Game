@@ -28,6 +28,7 @@ public class PlayerInteractionDetector : MonoBehaviour
     [SerializeField] private LayerMask interactionLayer = ~0;
 
     private IInteractable currentTarget;
+    private IInteractable lastTarget;
 
     private void Update()
     {
@@ -59,7 +60,22 @@ public class PlayerInteractionDetector : MonoBehaviour
         }
 
         currentTarget = closest;
-        currentTarget.UIInteractableON(gameObject);
+        if (currentTarget == lastTarget)
+        {
+            return;
+        }
+
+        if (lastTarget != null)
+        {
+            lastTarget.UIInteractableOFF(gameObject);
+        }
+
+        if (currentTarget != null)
+        {
+            currentTarget.UIInteractableON(gameObject);
+        }
+
+        lastTarget = currentTarget;
     }
 
     public  void OnInteract(InputAction.CallbackContext context)

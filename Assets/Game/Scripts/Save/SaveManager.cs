@@ -38,6 +38,7 @@ public class SaveManager : MonoBehaviour
     public static SaveManager Instance { get; private set; }
 
     [SerializeField, Min(1)] private int maxSlots = 3;
+    [SerializeField, Min(1)] private int activeSlot = 1;
 
     private ICheckpointProvider checkpointProvider;
     private float sessionStartTime;
@@ -59,6 +60,7 @@ public class SaveManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
         sessionStartTime = Time.realtimeSinceStartup;
+        activeSlot = Mathf.Clamp(activeSlot, 1, maxSlots);
     }
 
     // ── API pública ───────────────────────────────────────────────────────────
@@ -67,6 +69,33 @@ public class SaveManager : MonoBehaviour
     public void SetCheckpointProvider(ICheckpointProvider provider)
     {
         checkpointProvider = provider;
+    }
+
+    /// <summary>Slot activo para guardado/carga rápida.</summary>
+    public int ActiveSlot => activeSlot;
+
+    /// <summary>Establece el slot activo (1–maxSlots). Retorna true si fue válido.</summary>
+    public bool SetActiveSlot(int slot)
+    {
+        if (!EsSlotValido(slot))
+        {
+            return false;
+        }
+
+        activeSlot = slot;
+        return true;
+    }
+
+    /// <summary>Guarda en el slot activo.</summary>
+    public bool SaveActiveSlot()
+    {
+        return Save(activeSlot);
+    }
+
+    /// <summary>Carga desde el slot activo.</summary>
+    public bool LoadActiveSlot()
+    {
+        return Load(activeSlot);
     }
 
     /// <summary>

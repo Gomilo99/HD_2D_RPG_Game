@@ -35,6 +35,7 @@ public class ShopNPC : MonoBehaviour, IInteractable
 
     [Header("UI de la tienda")]
     [SerializeField] private GameObject shopUIPanel;
+    [SerializeField] private ShopUIController shopUI;
 
     [Header("Nombre del NPC")]
     [SerializeField] private string npcName = "Vendedor";
@@ -67,13 +68,19 @@ public class ShopNPC : MonoBehaviour, IInteractable
         
     }
         public void UIInteractableON(GameObject interactor)
-    {
-        interactablePanel.SetActive(true);
-    }
-    public void UIInteractableOFF(GameObject interactor)
-    {
-        interactablePanel.SetActive(false);
-    }
+        {
+            if (interactablePanel != null)
+            {
+                interactablePanel.SetActive(true);
+            }
+        }
+        public void UIInteractableOFF(GameObject interactor)
+        {
+            if (interactablePanel != null)
+            {
+                interactablePanel.SetActive(false);
+            }
+        }
 
     // ── API pública (llamada desde la UI de tienda) ────────────────────────────
 
@@ -135,6 +142,12 @@ public class ShopNPC : MonoBehaviour, IInteractable
     /// <summary>Cierra el panel de tienda.</summary>
     public void CerrarTienda()
     {
+        if (shopUI != null)
+        {
+            shopUI.Close();
+            return;
+        }
+
         if (shopUIPanel != null)
         {
             shopUIPanel.SetActive(false);
@@ -145,6 +158,17 @@ public class ShopNPC : MonoBehaviour, IInteractable
 
     private void AbrirTienda()
     {
+        if (shopUI == null && shopUIPanel != null)
+        {
+            shopUI = shopUIPanel.GetComponent<ShopUIController>();
+        }
+
+        if (shopUI != null)
+        {
+            shopUI.Open(this);
+            return;
+        }
+
         if (shopUIPanel != null)
         {
             shopUIPanel.SetActive(true);

@@ -21,6 +21,7 @@ using UnityEngine.SceneManagement;
 public class SaveCheckpoint : MonoBehaviour, IInteractable, ICheckpointProvider
 {
     [SerializeField] private int saveSlot = 1;
+    [SerializeField] private bool useActiveSlot = false;
     [SerializeField] private string cityName = "Ciudad desconocida";
     [SerializeField] private GameObject playerReference;
     [SerializeField] private AudioSource saveSound;
@@ -46,7 +47,8 @@ public class SaveCheckpoint : MonoBehaviour, IInteractable, ICheckpointProvider
         }
 
         SaveManager.Instance.SetCheckpointProvider(this);
-        bool exito = SaveManager.Instance.Save(saveSlot);
+        int slotToUse = useActiveSlot ? SaveManager.Instance.ActiveSlot : saveSlot;
+        bool exito = SaveManager.Instance.Save(slotToUse);
 
         if (exito && saveSound != null)
         {
@@ -55,11 +57,17 @@ public class SaveCheckpoint : MonoBehaviour, IInteractable, ICheckpointProvider
     }
     public void UIInteractableON(GameObject interactor)
     {
-        interactablePanel.SetActive(true);
+        if (interactablePanel != null)
+        {
+            interactablePanel.SetActive(true);
+        }
     }
     public void UIInteractableOFF(GameObject interactor)
     {
-        interactablePanel.SetActive(false);
+        if (interactablePanel != null)
+        {
+            interactablePanel.SetActive(false);
+        }
     }
 
     // ── ICheckpointProvider ───────────────────────────────────────────────────
