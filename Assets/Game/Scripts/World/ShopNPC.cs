@@ -124,6 +124,24 @@ public class ShopNPC : MonoBehaviour, IInteractable
             return false;
         }
 
+        EquipmentData equipmentData = item as EquipmentData;
+        if (equipmentData != null)
+        {
+            if (PlayerInventory.Instance == null || !PlayerInventory.Instance.RemoveEquipment(equipmentData))
+            {
+                Debug.Log($"ShopNPC: El jugador no tiene {item.itemName} para vender.");
+                return false;
+            }
+
+            if (PlayerData.Instance != null)
+            {
+                PlayerData.Instance.AddMoney(item.value);
+            }
+
+            ItemSold?.Invoke(item);
+            return true;
+        }
+
         if (PlayerInventory.Instance == null || !PlayerInventory.Instance.UseItem(item))
         {
             Debug.Log($"ShopNPC: El jugador no tiene {item.itemName} para vender.");

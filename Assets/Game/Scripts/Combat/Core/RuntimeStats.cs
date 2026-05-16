@@ -5,6 +5,7 @@ public class RuntimeStats
 {
     [SerializeField] private int maxHealth;
     [SerializeField] private int currentHealth;
+    [SerializeField] private int maxHealthModifier;
     [SerializeField] private int baseIntelligence;
     [SerializeField] private int baseMemory;
     [SerializeField] private int baseSpeed;
@@ -15,7 +16,7 @@ public class RuntimeStats
     [SerializeField] private int speedModifier;
     [SerializeField] private int luckModifier;
 
-    public int MaxHealth => maxHealth;
+    public int MaxHealth => Mathf.Max(1, maxHealth + maxHealthModifier);
     public int CurrentHealth => currentHealth;
 
     public int BaseIntelligence => baseIntelligence;
@@ -76,13 +77,17 @@ public class RuntimeStats
             return;
         }
 
-        currentHealth = Mathf.Min(maxHealth, currentHealth + amount);
+        currentHealth = Mathf.Min(MaxHealth, currentHealth + amount);
     }
 
     public void ModifyStat(StatType stat, int amount)
     {
         switch (stat)
         {
+            case StatType.Cordura:
+                maxHealthModifier += amount;
+                currentHealth = Mathf.Clamp(currentHealth, 0, MaxHealth);
+                break;
             case StatType.Inteligencia:
                 intelligenceModifier += amount;
                 break;
@@ -100,6 +105,6 @@ public class RuntimeStats
 
     public void SetCurrentHealth(int value)
     {
-        currentHealth = Mathf.Clamp(value, 0, maxHealth);
+        currentHealth = Mathf.Clamp(value, 0, MaxHealth);
     }
 }

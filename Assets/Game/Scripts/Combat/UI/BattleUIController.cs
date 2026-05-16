@@ -123,6 +123,11 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             return;
         }
 
+        if (item.category != ItemCategory.Consumable || !item.CanUseInBattle)
+        {
+            return;
+        }
+
         if (PlayerInventory.Instance == null || !PlayerInventory.Instance.HasItem(item))
         {
             return;
@@ -272,6 +277,10 @@ public class BattleUIController : MonoBehaviour, IActionSelector
             }
 
             ItemData itemLocal = entry.item;
+            if (itemLocal.category != ItemCategory.Consumable || !itemLocal.CanUseInBattle)
+            {
+                continue;
+            }
             Button button = Instantiate(actionButtonPrefab, itemButtonContainer);
             TextMeshProUGUI label = button.GetComponentInChildren<TextMeshProUGUI>();
             if (label != null)

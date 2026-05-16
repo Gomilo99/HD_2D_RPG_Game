@@ -16,6 +16,11 @@ public class UseItemAction : ICombatAction
             return;
         }
 
+        if (item.category != ItemCategory.Consumable || !item.CanUseInBattle)
+        {
+            return;
+        }
+
         if (PlayerInventory.Instance == null || !PlayerInventory.Instance.UseItem(item))
         {
             return;

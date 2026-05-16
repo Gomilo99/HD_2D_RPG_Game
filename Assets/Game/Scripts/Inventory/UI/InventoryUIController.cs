@@ -12,12 +12,16 @@ public class InventoryUIController : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject inventoryPanel;
     [SerializeField] private Transform itemButtonContainer;
+    [SerializeField] private Transform equipmentButtonContainer;
     [SerializeField] private Button itemButtonPrefab;
     [SerializeField] private TextMeshProUGUI moneyText;
 
     [Header("Behavior")]
     [SerializeField] private bool consumeOnClick = false;
     [SerializeField] private bool closeOnUse = false;
+    [SerializeField] private bool equipOnClick = false;
+    [SerializeField] private BaseCharacter fieldItemTarget;
+    [SerializeField] private BaseCharacter equipTarget;
 
     private readonly List<Button> spawnedButtons = new List<Button>();
     private bool isReady;
@@ -70,6 +74,7 @@ public class InventoryUIController : MonoBehaviour
     public void Refresh()
     {
         BuildItemButtons();
+        BuildEquipmentButtons();
         UpdateMoney();
     }
 
@@ -105,6 +110,39 @@ public class InventoryUIController : MonoBehaviour
         }
     }
 
+    private void BuildEquipmentButtons()
+    {
+        Transform container = equipmentButtonContainer != null ? equipmentButtonContainer : itemButtonContainer;
+        if (container == null)
+        {
+            return;
+        }
+
+        if (PlayerInventory.Instance == null || itemButtonPrefab == null)
+        {
+            return;
+        }
+
+        foreach (EquipmentData equipment in PlayerInventory.Instance.Equipment)
+        {
+            if (equipment == null)
+            {
+                continue;
+            }
+
+            Button button = Instantiate(itemButtonPrefab, container);
+            spawnedButtons.Add(button);
+
+            TextMeshProUGUI label = button.GetComponentInChildren<TextMeshProUGUI>();
+            if (label != null)
+            {
+                label.text = equipment.itemName;
+            }
+
+            button.onClick.AddListener(() => HandleEquipmentPressed(equipment));
+        }
+    }
+
     private void HandleItemPressed(ItemData item)
     {
         if (item == null)
@@ -116,13 +154,54 @@ public class InventoryUIController : MonoBehaviour
 
         if (consumeOnClick && PlayerInventory.Instance != null)
         {
-            PlayerInventory.Instance.UseItem(item);
-            Refresh();
-
-            if (closeOnUse)
+            if (item.category != ItemCategory.Consumable || !item.CanUseInField)
             {
-                Close();
+                return;
             }
+
+            BaseCharacter target = fieldItemTarget != null ? fieldItemTarget : GetDefaultTarget();
+            if (target == null)
+            {
+                Debug.LogWarning("InventoryUIController: No hay objetivo para usar el objeto fuera de combate.");
+                return;
+            }
+
+            if (FieldItemUseService.TryUse(item, target))
+            {
+                Refresh();
+
+                if (closeOnUse)
+                {
+                    Close();
+                }
+            }
+        }
+    }
+
+    private void HandleEquipmentPressed(EquipmentData equipment)
+    {
+        if (equipment == null)
+        {
+            return;
+        }
+
+        ItemSelected?.Invoke(equipment);
+
+        if (!equipOnClick || PlayerInventory.Instance == null)
+        {
+            return;
+        }
+
+        BaseCharacter target = equipTarget != null ? equipTarget : GetDefaultTarget();
+        if (target == null)
+        {
+            Debug.LogWarning("InventoryUIController: No hay objetivo para equipar.");
+            return;
+        }
+
+        if (PlayerInventory.Instance.TryEquip(equipment, target))
+        {
+            Refresh();
         }
     }
 
@@ -142,6 +221,7 @@ public class InventoryUIController : MonoBehaviour
         {
             PlayerInventory.Instance.ItemAdded += HandleItemAdded;
             PlayerInventory.Instance.ItemUsed += HandleItemUsed;
+            PlayerInventory.Instance.EquipmentAdded += HandleEquipmentAdded;
         }
 
         if (PlayerData.Instance != null)
@@ -156,6 +236,7 @@ public class InventoryUIController : MonoBehaviour
         {
             PlayerInventory.Instance.ItemAdded -= HandleItemAdded;
             PlayerInventory.Instance.ItemUsed -= HandleItemUsed;
+            PlayerInventory.Instance.EquipmentAdded -= HandleEquipmentAdded;
         }
 
         if (PlayerData.Instance != null)
@@ -170,6 +251,11 @@ public class InventoryUIController : MonoBehaviour
     }
 
     private void HandleItemUsed(ItemData item)
+    {
+        Refresh();
+    }
+
+    private void HandleEquipmentAdded(EquipmentData equipment)
     {
         Refresh();
     }
@@ -206,5 +292,15 @@ public class InventoryUIController : MonoBehaviour
         }
 
         return true;
+    }
+
+    private BaseCharacter GetDefaultTarget()
+    {
+        if (PlayerData.Instance == null || PlayerData.Instance.PartyMembers.Count == 0)
+        {
+            return null;
+        }
+
+        return PlayerData.Instance.PartyMembers[0];
     }
 }

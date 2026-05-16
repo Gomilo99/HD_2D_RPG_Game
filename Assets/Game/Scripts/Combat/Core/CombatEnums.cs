@@ -42,6 +42,19 @@ public enum ItemEffectType
     Revive
 }
 
+public enum ItemCategory
+{
+    Consumable,
+    Equipment
+}
+
+public enum ItemUseContext
+{
+    BattleOnly,
+    FieldOnly,
+    BattleAndField
+}
+
 public enum CombatResult
 {
     Ongoing,

@@ -99,6 +99,18 @@ public class ShopUIController : MonoBehaviour
             return;
         }
 
+        foreach (EquipmentData equipment in PlayerInventory.Instance.Equipment)
+        {
+            if (equipment == null)
+            {
+                continue;
+            }
+
+            Button button = Instantiate(itemButtonPrefab, sellButtonContainer);
+            SetButtonLabel(button, $"{equipment.itemName} +$ {equipment.value}");
+            button.onClick.AddListener(() => TrySell(equipment));
+        }
+
         foreach (PlayerInventory.ConsumableEntry entry in PlayerInventory.Instance.Consumables)
         {
             if (entry == null || entry.item == null)

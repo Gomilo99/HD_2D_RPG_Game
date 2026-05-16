@@ -83,6 +83,19 @@ public class PlayerInventory : MonoBehaviour
             return;
         }
 
+        EquipmentData equipmentData = item as EquipmentData;
+        if (equipmentData != null || item.category == ItemCategory.Equipment)
+        {
+            if (equipmentData == null)
+            {
+                Debug.LogWarning("PlayerInventory: Item marcado como Equipment pero no es EquipmentData.");
+                return;
+            }
+
+            AddEquipment(equipmentData);
+            return;
+        }
+
         ConsumableEntry entry = FindEntry(item);
         if (entry == null)
         {
@@ -100,6 +113,11 @@ public class PlayerInventory : MonoBehaviour
     public bool UseItem(ItemData item)
     {
         if (item == null)
+        {
+            return false;
+        }
+
+        if (item.category == ItemCategory.Equipment)
         {
             return false;
         }
@@ -123,6 +141,17 @@ public class PlayerInventory : MonoBehaviour
     /// <summary>Verifica si el inventario contiene al menos una unidad del ítem indicado.</summary>
     public bool HasItem(ItemData item)
     {
+        if (item == null)
+        {
+            return false;
+        }
+
+        EquipmentData equipmentData = item as EquipmentData;
+        if (equipmentData != null)
+        {
+            return equipment.Contains(equipmentData);
+        }
+
         ConsumableEntry entry = FindEntry(item);
         return entry != null && entry.quantity > 0;
     }
@@ -150,6 +179,46 @@ public class PlayerInventory : MonoBehaviour
         }
 
         return equipment.Remove(equipmentData);
+    }
+
+    /// <summary>Intenta equipar un objeto al personaje objetivo.</summary>
+    public bool TryEquip(EquipmentData equipmentData, BaseCharacter target)
+    {
+        if (equipmentData == null || target == null)
+        {
+            return false;
+        }
+
+        if (!equipment.Contains(equipmentData))
+        {
+            return false;
+        }
+
+        EquipmentLoadout loadout = target.GetComponent<EquipmentLoadout>();
+        if (loadout == null)
+        {
+            Debug.LogWarning("PlayerInventory: EquipmentLoadout no encontrado en el objetivo.");
+            return false;
+        }
+
+        return loadout.Equip(equipmentData);
+    }
+
+    /// <summary>Intenta desequipar un objeto del personaje objetivo.</summary>
+    public bool TryUnequip(EquipmentData equipmentData, BaseCharacter target)
+    {
+        if (equipmentData == null || target == null)
+        {
+            return false;
+        }
+
+        EquipmentLoadout loadout = target.GetComponent<EquipmentLoadout>();
+        if (loadout == null)
+        {
+            return false;
+        }
+
+        return loadout.Unequip(equipmentData);
     }
 
     // ── Privados ──────────────────────────────────────────────────────────────

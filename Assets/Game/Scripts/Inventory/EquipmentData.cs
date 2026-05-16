@@ -1,26 +1,15 @@
 using UnityEngine;
 
 /// <summary>
-/// ScriptableObject que define un objeto de equipamiento.
-/// Al equiparse a un personaje, modifica una o más estadísticas base de manera permanente
-/// mientras está equipado. También puede tener efectos adicionales sobre habilidades.
-///
-/// Uso:
-/// - Crea un asset con clic derecho → RPG/Equipment Data
-/// - Configura los modificadores de estadísticas.
-/// - Asigna al PlayerInventory para que el jugador pueda equiparlo.
-/// </summary>
+using UnityEngine;
+
+/// <summary>
+/// Objeto de equipamiento que hereda de ItemData.
+/// Al equiparse a un personaje, modifica estadísticas base mientras está equipado.
+/// La identificación, descripción, precio y reglas de uso están en ItemData.
 [CreateAssetMenu(fileName = "NewEquipment", menuName = "RPG/Equipment Data")]
-public class EquipmentData : ScriptableObject
+public class EquipmentData : ItemData
 {
-    [Header("Identificación")]
-    public string equipmentName;
-    [TextArea] public string description;
-
-    [Header("Precio")]
-    [Tooltip("Precio de venta/compra en la tienda.")]
-    public int value = 100;
-
     [Header("Modificadores de estadísticas")]
     [Tooltip("Modifica la Cordura máxima (vida).")]
     public int corduraModifier = 0;
@@ -45,4 +34,9 @@ public class EquipmentData : ScriptableObject
     [Tooltip("Turnos adicionales que se suman a la duración de buffs/debuffs.")]
     [Min(0)]
     public int abilityDurationBonus = 0;
+
+    private void OnValidate()
+    {
+        category = ItemCategory.Equipment;
+    }
 }
