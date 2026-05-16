@@ -92,7 +92,10 @@ public class PlayerInventory : MonoBehaviour
                 return;
             }
 
-            AddEquipment(equipmentData);
+            if (!equipment.Contains(equipmentData))
+            {
+                AddEquipment(equipmentData);
+            }
             return;
         }
 

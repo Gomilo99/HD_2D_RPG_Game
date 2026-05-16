@@ -1,8 +1,6 @@
 using UnityEngine;
 
 /// <summary>
-using UnityEngine;
-
 /// <summary>
 /// Objeto de equipamiento que hereda de ItemData.
 /// Al equiparse a un personaje, modifica estadísticas base mientras está equipado.
